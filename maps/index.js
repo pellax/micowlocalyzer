@@ -48,6 +48,9 @@ function initMap(){
             marker.addListener('mouseout',() =>{
               detailWindow.close();
             })
+            marker.addListener('click',() =>{
+              window.location.href = "./maps_heatmap/index.html";
+            })
           }
 
   }
