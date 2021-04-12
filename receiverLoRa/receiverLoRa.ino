@@ -35,12 +35,12 @@ String LoRaData;
 WiFiClient client;
 
 //WiFi parameters
-const char* ssid = "X";
-const char* password =  "X";
+const char* ssid = "VodafoneLF";
+const char* password =  "934601797LF";
 
 //Server parameters
-const uint16_t port = 8090;
-const char* host = "X";
+const uint16_t port = 40351;
+const char* host = "nattech.fib.upc.edu";
 
 void setup() { 
   
@@ -117,13 +117,9 @@ void loop() {
     //read packet
     while (LoRa.available()) {
       LoRaData = LoRa.readString();
-      client.print(LoRaData);
     }
 
     //print RSSI of packet
-    int rssi = LoRa.packetRssi();
-    client.print(" with RSSI ");
-    client.print(rssi);   
 
    // Display information
    display.clearDisplay();
@@ -133,11 +129,10 @@ void loop() {
    display.print("Received packet:");
    display.setCursor(0,30);
    display.print(LoRaData);
-   client.print(LoRaData);
+   client.println(LoRaData);
    display.setCursor(0,40);
    display.print("RSSI:");
    display.setCursor(30,40);
-   display.print(rssi);
    display.display();   
   }
 }

@@ -7,11 +7,20 @@
 #include <SPI.h>
 #include <LoRa.h>
 
+
 //Libraries for OLED Display
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+//Data structure libraries
+#include <pseudostack.h>
+
+//Libraries for timing
+#include <time.h>
+
+//define the device identifier
+#define DEV_ID 3
 
 //define the pins used by the LoRa transceiver module
 #define SCK 5
@@ -37,6 +46,9 @@ int SN = 3;
 TinyGPSPlus gps;
 SFE_UBLOX_GPS myGPS;
 AXP20X_Class axp;
+String LoRaData;
+int identifier = 0;
+int pasttime = 0;
 
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
@@ -114,15 +126,22 @@ void setup() {
     display.display();
     delay(3000);
   }
-
+  
+  create();
   delay(2000);
-
+  pasttime = clock() / CLOCKS_PER_SEC;
 }
 
-void loop() {
-   if (Serial1.available()) {
-      gps.encode(Serial1.read());
+void sendGPS() {
+  gps.encode(Serial1.read());
+      identifier = rand() % 999999;
+      push(identifier);
       LoRa.beginPacket();
+      // there's no separator, but here comes the message identifier
+      LoRa.print(identifier);
+      LoRa.print("d"); // here comes the device identifier
+      LoRa.print(DEV_ID);
+      LoRa.print("m"); // here comes the message itself
       LoRa.print(SN);
       LoRa.print(counter);
       LoRa.print(gps.location.lat(), 5);
@@ -132,25 +151,45 @@ void loop() {
       LoRa.print(gps.time.minute());
       LoRa.print(gps.time.second());
       LoRa.endPacket();
-    display.clearDisplay();
-    display.setCursor(0,0);
-   display.print("Latitude  : ");
-    display.println(gps.location.lat(), 5);
-    display.print("Longitude : ");
-    display.println(gps.location.lng(), 4);
-    display.print("Satellites: ");
-    display.println(gps.satellites.value());
-    display.print("Altitude  : ");
-    display.print(gps.altitude.feet() / 3.2808);
-    display.println("M");
-    display.print("Time      : ");
-    display.print(gps.time.hour());
-    display.print(":");
-    display.print(gps.time.minute());
-    display.print(":");
-    display.println(gps.time.second());
-    display.display();
-    delay(3000);
     ++counter;
+    pasttime = clock() / CLOCKS_PER_SEC;
+    Serial.print("Data sent. Current pasttime: ");
+    Serial.println(pasttime);
+}
+
+void readAndRepeatLora() {
+    while (LoRa.available()) {
+      LoRaData = LoRa.readString();
+    }
+    Serial.print("Recibido: ");
+    Serial.println(LoRaData);
+    if (!exists(atoi(LoRaData.c_str()))) {
+    Serial.println("Gonna wait a bit");
+    delay((rand() % (5000 - 500 + 1) + 500));
+      Serial.println("Pushing");
+      push(atoi(LoRaData.c_str()));
+      Serial.println("Pushed");
+      LoRa.beginPacket();
+      Serial.print("Repito: ");
+      Serial.println(LoRaData);
+      LoRa.print(LoRaData);
+      LoRa.endPacket();
+    } else {
+      Serial.print("NO Repito: ");
+      Serial.println(LoRaData);
+    }
+}
+
+void loop() {
+  int sec = clock() / CLOCKS_PER_SEC;
+   if ((sec-pasttime >= (rand() % (60 - 30 + 1) + 30)) && Serial1.available()) {
+      Serial.println("Going to sendGPS");
+      sendGPS();
+   }
+   
+   int packetSize = LoRa.parsePacket();
+   if (packetSize) {
+    Serial.println("Going to readAndRepeatLora");
+    readAndRepeatLora();
    }
 }
