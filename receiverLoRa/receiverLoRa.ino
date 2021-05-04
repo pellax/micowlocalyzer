@@ -1,6 +1,9 @@
 //Library for WiFi
 #include "WiFi.h"
 
+//Library for HTTP Comm
+#include "HTTPClient.h"
+
 //Libraries for LoRa
 #include <SPI.h>
 #include <LoRa.h>
@@ -106,8 +109,17 @@ void setup() {
   delay(1000);
 }
 
-void loop() {
+void example() {
+  HTTPClient http;
+  http.begin("http://nattech.fib.upc.edu:40350/send_gps");
+  http.addHeader("User-Agent", "curl/7.26.0", true, true);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded", false, true);
+  Serial.print(http.POST("id=1&lat=41.3851&lon=2.1734"));
+  http.end();
+}
 
+void loop() {
+  example();
   //try to parse packet
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
@@ -134,5 +146,6 @@ void loop() {
    display.print("RSSI:");
    display.setCursor(30,40);
    display.display();   
+   
   }
 }
