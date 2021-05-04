@@ -8,5 +8,5 @@ mongoose.connect(MONGODB_URI,{
     useCreateIndex: true
 
 })
-    .then(db => console.log('Conectada'))
+    .then(db => console.log('Conectada a la DB'))
     .catch(err => console.log(err));

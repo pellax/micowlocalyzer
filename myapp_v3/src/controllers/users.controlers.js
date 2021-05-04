@@ -10,7 +10,7 @@ usersCtrl.renderSignUpForm = (req,res) => {
 
 usersCtrl.signup = async (req,res) => {
     const errors = []; //Almacena todo los objetos que contienen errores
-    const{name, password, confirm_password } = req.body;
+    const{name, password, email, confirm_password } = req.body;
     if (password != confirm_password) {
         errors.push({text:'Passwords do not match'});
     }
@@ -23,7 +23,7 @@ usersCtrl.signup = async (req,res) => {
             name
         })
     }else {
-        const nameUser = await User.findOne({name: name});
+        const nameUser = await User.findOne({name: name}).lean();
         if (nameUser){
             errors.push({text:'User already exist'});
             res.render('users/signup',{
@@ -31,7 +31,7 @@ usersCtrl.signup = async (req,res) => {
                 name
             })
         }else{
-            const newUser = new User({name,password});
+            const newUser = new User({name,password, email});
             newUser.password = await newUser.encryptPassword(password);
             await newUser.save();
             res.redirect('/users/signin');
@@ -46,11 +46,13 @@ usersCtrl.renderSigninForm = (req,res) => {
 usersCtrl.signin = passport.authenticate('local',{
     failureRedirect: '/users/signin',
     //cambiar en el futuro
-    successRedirect: '/users/valid'
+    successRedirect: '/',
+    failureFlash: true
 })
 
 usersCtrl.logout = (req,res) => {
-    res.send('logout');
+    req.logout();
+    res.redirect('/');
 };
 
 usersCtrl.valid = (req,res) => {

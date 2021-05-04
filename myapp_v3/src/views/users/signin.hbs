@@ -1,8 +1,27 @@
-<h1>Account Login</h1>
-<form action="/users/signin" method="POST">
-    <label>Name</label>
-    <input type="text" name="name" value="{{name}}"><br>
-    <label>Pass</label>
-    <input type="password" name="password">
-    <button>Signin</button>
-</form>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>PTI</title>
+    <link rel="stylesheet" href="../fonts/SinewsSansPro/stylesheet.css" type="text/css">
+
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <link rel="javascript" href="../js/sticky_nav.js">
+  </head>
+  <body>
+    <main>
+      <h3 class="centrar-texto">Inicia Sesión</h3>
+      <form class="formulario" action="/users/signin" method="POST">
+        <div class="campo">
+          <input class="campo__field" type="text" placeholder="Usuario" name="name">
+        </div>
+        <div class="campo">
+          <input class="campo__field" type="password" placeholder="Contraseña" name="password">
+        </div>
+        <button class="boton btn">Iniciar Sesión</button>
+        <a class="campo__registrar" href="signup">No tienes cuenta? Registrate aquí!</a>
+      </form>
+    </main>
+  </body>
+</html>
