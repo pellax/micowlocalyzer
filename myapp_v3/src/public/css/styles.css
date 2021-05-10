@@ -15,7 +15,8 @@
 html {
   box-sizing: border-box;
   font-size: 62.5%;
-  height: 100%;
+  min-height: 100%;
+  position: relative;
 }
 
 *, *:before, *:after {
@@ -69,6 +70,10 @@ h4 {
   margin: 0 auto;
 }
 
+.container {
+
+}
+
 .contenedor-texto {
   width: min(70%, 120rem);
   margin: 0 auto;
@@ -115,7 +120,7 @@ h4 {
 
 /* Header */
 .barra {
-  padding: 2rem 5rem;
+  padding: 2rem 15rem 2rem 5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -176,13 +181,26 @@ h4 {
 .desplegable__link {
     display: block;
     align-items: right;
-    width: 20rem;
+    width: 15rem;
+    color: var(--blanco);
 }
 
 .desplegable:hover .desplegable__content {
   display: block;
-  background: var(--blanco);
+  border-radius: 0.5rem;
+  background: var(--negro-claro);
   padding: 0 2rem;
+}
+
+.desplegable__link:hover {
+    color: var(--dorado);
+}
+
+.separador {
+    color: var(--dorado);
+    height: 2px;
+    margin: 1rem;
+
 }
 
 .usuario__cuenta {
@@ -324,6 +342,48 @@ h4 {
   z-index: -1;
 }
 
+.boton2 {
+  width: 100%;
+  margin: 5rem auto 1rem auto;
+  border: 2px solid var(--dorado);
+  border-radius: 1rem;
+  color: var(--negro);
+  transition: 1s all ease;
+  padding: 12px 24px;
+  font-size: 16px;
+  text-align: center;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.boton2:hover {
+  cursor: pointer;
+}
+
+.boton2:focus {
+  outline: none;
+}
+
+.boton2:before {
+  transition: 0.3s all ease;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  right: 50%;
+  bottom: 0;
+  background-color: var(--dorado);
+  content: "";
+  border-radius: 1rem;
+}
+
+.boton2:hover:before {
+  transition: 0.7s all ease;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+
 .campo__registrar {
   font-size: 1.2rem;
   color: var(--dorado);
@@ -335,3 +395,37 @@ h4 {
 }
 
 /* Footer */
+.footer {
+    height: 20rem;
+    width: 100%;
+}
+
+/* Perfil */
+.usuario__img {
+    padding-top: 2rem;
+    width: 15%;
+}
+
+.usuario__datos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+}
+
+.usuario__campos,
+.usuario__campos-tit {
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    font-size: 2.3rem;
+}
+
+.usuario__campos-tit {
+    font-weight: bold;
+}
+
+.usuario__boton {
+    display: block;
+    width: 20%;
+    margin: 0 auto;
+}

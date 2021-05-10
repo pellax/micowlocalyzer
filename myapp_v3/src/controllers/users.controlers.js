@@ -34,6 +34,7 @@ usersCtrl.signup = async (req,res) => {
             const newUser = new User({name,password, email});
             newUser.password = await newUser.encryptPassword(password);
             await newUser.save();
+            req.flash("success_msg", "You are registered.");
             res.redirect('/users/signin');
         }
     }
@@ -52,11 +53,12 @@ usersCtrl.signin = passport.authenticate('local',{
 
 usersCtrl.logout = (req,res) => {
     req.logout();
+    req.flash("success_msg", "You are logged out now.");
     res.redirect('/');
 };
 
-usersCtrl.valid = (req,res) => {
-    res.send('/users/valid');
+usersCtrl.profile = (req,res) => {
+    res.render('users/profile');
 };
 
 module.exports = usersCtrl;
