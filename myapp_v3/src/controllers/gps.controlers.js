@@ -8,6 +8,7 @@ gpsCtrl.sendgps = async (req,res) => {
     const newLoc = new Gps({id,lat,lon});
     await newLoc.save();
     res.send('recibido');
+    
 };
 
 module.exports = gpsCtrl;
