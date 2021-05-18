@@ -6,13 +6,14 @@ const path = require('path');
 const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
+const methodOverride = require('method-override');
 
 // Initializations
 const app = express();
 require('./config/passport');
 
 //Settings
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 4000);
 app.set('views', path.join(__dirname,'views'));
 app.engine('.hbs', hbs({
     defaultLayout: 'default',
@@ -24,6 +25,7 @@ app.set('view engine', '.hbs');
 
 //Middlewares
 app.use(express.urlencoded({extended: false})); //Transformara los datos recibidos en JSON
+app.use(methodOverride('_method'))
 app.use(session({
     secret: 'secret',
     resave: true,
@@ -33,6 +35,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash())
+
 //Global Variables
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success_msg');
