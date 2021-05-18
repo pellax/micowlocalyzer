@@ -22,6 +22,11 @@ gpsCtrl.sendgps = async (req,res) => {
     }
 };
 
+gpsCtrl.getgps = async(req, res) =>{
+    const gps = await Gps.find();
+    res.send(JSON.stringify(gps));
+}
+
 gpsCtrl.addloc = async (req, res) => {
     const {id, name} = req.body;
     const register = await Loc.findOne({id: id}).lean();
