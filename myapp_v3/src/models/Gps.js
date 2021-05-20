@@ -7,5 +7,4 @@ const GpsSchema = new Schema({
 }, {
     timestamps: true
 });
-
 module.exports = model('Gps',GpsSchema);
