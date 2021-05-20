@@ -1,11 +1,10 @@
 const locCtrl = {};
 
 locCtrl.localizar = (req, res) => {
+    console.log(req.user.name);
     res.render('localizar');
 };
 
-locCtrl.renderLocsForm = (req, res) => {
-    res.render("locs/new-loc");
-}
-
 module.exports = locCtrl;
+
+
