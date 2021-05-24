@@ -24,11 +24,9 @@ gpsCtrl.sendgps = async (req,res) => {
                 "lat": lat,
                 "lon": lon
             };
-            //await Gps.findOneAndReplace({id: id}, aux);
-            await newLoc.save();
+            await Gps.findOneAndReplace({id: id}, aux);
         }
         else {
-            console.log(newLoc);
             await newLoc.save();
         }
         res.send('recibido');
@@ -39,11 +37,9 @@ gpsCtrl.getgps = async(req, res) =>{
     const username = req.user.name;
     const loc = await Loc.find({name: username});
     var gps = [];
-    console.log(loc);
     for(const i in loc){
         gps.push(await Gps.find({id: loc[i].id}));
     }
-    console.log(gps); 
     res.send(JSON.stringify(gps));
 }
 
