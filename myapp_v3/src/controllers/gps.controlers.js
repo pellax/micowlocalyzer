@@ -1,7 +1,7 @@
 const gpsCtrl = {};
 
-const Gps = require("../models/Gps")
-const Loc = require("../models/Loc")
+const Gps = require("../models/Gps");
+const Loc = require("../models/Loc");
 
 gpsCtrl.locs = async (req, res) => {
     const locs = await Loc.find({name: req.user.name});
@@ -17,13 +17,28 @@ gpsCtrl.sendgps = async (req,res) => {
     const register = await Loc.findOne({id: id}).lean();
     if(register){
         const newLoc = new Gps({id,lat,lon});
-        await newLoc.save();
+        const hiha = await Gps.findOne();
+        if(hiha){
+            const aux = {
+                "id": id,
+                "lat": lat,
+                "lon": lon
+            };
+            await Gps.findOneAndReplace({id: id}, aux);
+        }
+        else await newLoc.save();
         res.send('recibido');
     }
 };
 
 gpsCtrl.getgps = async(req, res) =>{
-    const gps = await Gps.find();
+    const username = req.user.name;
+    const loc = await Loc.find({name: username});
+    var gps = [];
+    for(const i in loc){
+        gps.push(await Gps.find({id: loc[i].id}));
+    }
+    console.log(gps); 
     res.send(JSON.stringify(gps));
 }
 
@@ -41,7 +56,6 @@ gpsCtrl.addloc = async (req, res) => {
 };
 
 gpsCtrl.removeloc = async (req, res) => {
-    console.log(req)
     await Loc.findByIdAndDelete(req.params.id);
     req.flash("success_msg", "Loc Deleted Successfully");
     res.redirect('/locs');
