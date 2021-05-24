@@ -27,6 +27,7 @@ map = new google.maps.Map(document.getElementById("map"),options);
           map:map,
 
           });
+          marker.setIcon("../img/marker.png");
           markerStore[res[i][j].id] = marker;
       }
       marker.addListener('click',() =>{
