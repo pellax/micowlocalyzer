@@ -2,7 +2,9 @@ function initMap(){
 
   var markerStore = {};
 
-  var Interval = 20000;
+  var marker;
+
+  var Interval = 5000;
   // Map option
 
   var options = {
@@ -16,13 +18,14 @@ map = new google.maps.Map(document.getElementById("map"),options);
 
   async function getCoordinates(){
   $.get('/get_gps', {} , function(res , resp){
+    console.log("markerStore");
     for (var i = 0 , len= res.length ; i < len; i++){
       for(var j = 0, lin= res[i].length; j < lin; j++){
         if (markerStore.hasOwnProperty(res[i][j].id)){
           markerStore[res[i][j].id].setPosition(new google.maps.LatLng(res[i][j].lat , res[i][j].lon));
         }
         else{
-        var marker = new google.maps.Marker({
+          marker = new google.maps.Marker({
           position:new google.maps.LatLng(res[i][j].lat , res[i][j].lon),
           map:map,
 

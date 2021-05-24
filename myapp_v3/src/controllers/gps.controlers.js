@@ -24,7 +24,8 @@ gpsCtrl.sendgps = async (req,res) => {
                 "lat": lat,
                 "lon": lon
             };
-            await Gps.findOneAndReplace({id: id}, aux);
+            //await Gps.findOneAndReplace({id: id}, aux);
+            await newLoc.save();
         }
         else {
             console.log(newLoc);
