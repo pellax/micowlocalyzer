@@ -7,8 +7,9 @@ function initMap(){
 
   var options = {
     center: {lat: 41.3851 , lng:2.1734 },
-    zoom: 10,
-    gestureHandling: 'greedy'
+    zoom: 15,
+    gestureHandling: 'greedy',
+  
   }
 //New Map
 map = new google.maps.Map(document.getElementById("map"),options);
@@ -24,9 +25,9 @@ map = new google.maps.Map(document.getElementById("map"),options);
       else{
       var marker = new google.maps.Marker({
         position:new google.maps.LatLng(res[i].lat , res[i].lon),
-        map:map,
-
+        map:map
         });
+        marker.setIcon("../img/marker.png");
         markerStore[res[i].id] = marker;
     }
     marker.addListener('click',() =>{
