@@ -6,14 +6,12 @@ const path = require('path');
 const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
-const methodOverride = require('method-override');
-
 // Initializations
 const app = express();
 require('./config/passport');
 
 //Settings
-app.set('port', process.env.PORT || 4000);
+app.set('port', process.env.PORT || 8080);
 app.set('views', path.join(__dirname,'views'));
 app.engine('.hbs', hbs({
     defaultLayout: 'default',
@@ -24,8 +22,7 @@ app.engine('.hbs', hbs({
 app.set('view engine', '.hbs');
 
 //Middlewares
-app.use(express.urlencoded({extended: false})); //Transformara los datos recibidos en JSON
-app.use(methodOverride('_method'))
+app.use(express.urlencoded({extended: false})); //Transformara los datos recibidos en JSON,true= acepta objetos
 app.use(session({
     secret: 'secret',
     resave: true,
@@ -35,7 +32,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash())
-
 //Global Variables
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success_msg');
@@ -48,11 +44,12 @@ app.use((req, res, next) => {
 app.get('/',(req,res)=>{
     res.render('./index');
 });
-
+app.use(require('./routes/test.routes'));
 app.use(require('./routes/users.routes'));
 app.use(require('./routes/gps.routes'));
 app.use(require('./routes/localizar.routes'));
-
+app.use(require('./routes/DataPacket.routes'));
+app.use(require('./routes/RoutingTable.routes'));
 app.use(express.static(path.join(__dirname, '/public')));
 
 //Static files --Archivos que el navegador puede pedir directamente.

@@ -1,5 +1,6 @@
 //Library for WiFi
-#include "WiFi.h"
+#include <WiFi.h>
+
 
 //Library for HTTP Comm
 #include "HTTPClient.h"
@@ -24,12 +25,16 @@
 //define LoRa BAND (886E6 for Europe)
 #define BAND 866E6
 
+
 //define OLED pins and size
 #define OLED_SDA 21
 #define OLED_SCL 22 
 #define OLED_RST 16 //npi
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+//Data structure libraries
+//#include <pseudostack.h>
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
 
@@ -38,8 +43,10 @@ String LoRaData;
 WiFiClient client;
 
 //WiFi parameters
-const char* ssid = "VodafoneLF";
-const char* password =  "934601797LF";
+const char* ssid = "MOVISTAR_44B6";
+const char* password = "E2zeYs8s4t6uZJ86z2C9";
+//const char* ssid = "niicoiphone";
+//const char* password =  "aaaaaaaa";
 
 //Server parameters
 const uint16_t port = 40351;
@@ -70,7 +77,7 @@ void setup() {
   //initialize Serial Monitor
   Serial.begin(115200);
 
-  Serial.println("LoRa Receiver Test");
+  Serial.println("CowLocator receptor");
   
   //SPI LoRa pins
   SPI.begin(SCK, MISO, MOSI, SS);
@@ -78,10 +85,10 @@ void setup() {
   LoRa.setPins(SS, RST, DIO0);
 
   if (!LoRa.begin(BAND)) {
-    Serial.println("Starting LoRa failed!");
+    Serial.println("No se ha podido iniciar LoRa");
     while (1);
   }
-  Serial.println("LoRa Initializing OK!");
+  Serial.println("He iniciado LoRa!");
   display.setCursor(0,10);
   display.println("LoRa Initializing OK!");
   display.display();  
@@ -89,46 +96,94 @@ void setup() {
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    display.println("Connecting to WiFi..");
+    Serial.println("Me estoy conectando a WiFi");
     display.display();
     delay(1000);
   }
-  display.println("Connected to WiFi");
+  Serial.println("Contectado a WiFi!");
   display.display();
   display.clearDisplay();
   display.setCursor(0,0);
   
-  if (!client.connect(host, port)) {
-    display.println("Connection failed");
-  } else {
-    display.println("Connection OK");
-    client.print("Hello");
-  }
   display.display();
-  
+  create();
   delay(1000);
 }
 
-void example() {
-  HTTPClient http;
-  http.begin("http://nattech.fib.upc.edu:40350/send_gps");
-  http.addHeader("User-Agent", "curl/7.26.0", true, true);
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded", false, true);
-  Serial.print(http.POST("id=1&lat=41.3851&lon=2.1734"));
-  http.end();
+void sendToServer(String LoRaData) {
+  const char * message = LoRaData.c_str();  
+  String mid ="";
+  String id = "";
+  String sats = "";
+  String lt = "";
+  String lg = "";
+
+  int i = 0;
+  
+  while (message[i] != 'd') {
+    mid += message[i];
+    ++i;
+  }
+
+  ++i;
+
+  while (message[i] != 'd') {
+    id += message[i];
+    ++i;
+  }
+  ++i;
+
+  while (message[i] != 'd') {
+    sats += message[i];
+    ++i; 
+  }
+  ++i;
+
+  while (message[i] != 'd') {
+    lt += message[i];
+    ++i; 
+  }
+  ++i;
+
+  while (i < strlen(message)) {
+    lg += message[i];
+    ++i;
+  }
+  if (sats != "0") { 
+    HTTPClient http;
+    http.begin("http://192.168.1.60:8080/send_gps");
+    http.addHeader("User-Agent", "CowLocalizer/1.0", true, true);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded", false, true);
+    int res = http.POST("id=" +id+"&lat="+lt+"&lon="+lg);
+    if (res == -1) Serial.println("He intentado enviar el mensaje al servidor, pero he recibido error -1. Parece que el servidor está desconectado o no responde");
+    else {
+      Serial.print("He enviado el mensaje al servidor, y me ha devuelto un código HTTP ");
+      Serial.println(res);
+    }
+    http.end();
+  } else Serial.println("No he enviado el mensaje, ya que contenía una latitud y longitud incorrectas.");
+  push(atoi(mid.c_str()));
 }
 
 void loop() {
-  example();
+  //example();
   //try to parse packet
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
-    //received a packet
-    Serial.print("Received packet ");
-
     //read packet
     while (LoRa.available()) {
       LoRaData = LoRa.readString();
+    }
+    if (!exists(atoi(LoRaData.c_str()))) {
+      Serial.print("He recibido este mensaje: ");
+      Serial.print(LoRaData);
+      Serial.println(". Procedo a enviarlo al servidor");
+      sendToServer(LoRaData);
+    }
+    else {
+      Serial.print("He recibido este mensaje: ");
+      Serial.print(LoRaData);
+      Serial.println(". Pero ya lo he enviado al servidor, así que no lo voy a hacer otra vez");
     }
 
     //print RSSI of packet

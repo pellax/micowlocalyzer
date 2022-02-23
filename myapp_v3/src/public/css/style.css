@@ -5,18 +5,10 @@
       }
       
       /* Optional: Makes the sample page fill the window. */
-      html{
+      html,
+      body {
         height: 100%;
         margin: 0;
         padding: 0;
-      }
-
-      .footer2 {
-        height: 20rem;
-        width: 100%;
-      }
-
-      .separacion2 {
-        padding-bottom: 0;
       }
       

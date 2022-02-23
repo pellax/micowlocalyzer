@@ -1,36 +1,27 @@
 <div class="row">
-  {{#each locs}}
+  {{#each notes}}
   <div class="col-md-3">
-    <div class="carta">
-      <div class="carta-body">
-        <h4 class="carta-title">
-          {{ id }} <a href="/notes/edit/{{_id}}"><i class="fas fa-edit"></i></a>
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title d-flex justify-content-between align-items-center">
+          {{ title }} <a href="/notes/edit/{{_id}}"><i class="fas fa-edit"></i></a>
         </h4>
+        <p>{{ description }} </p>
         <!-- DELETE REQUEST -->
-        <form action="/remove_loc/{{_id}}?_method=DELETE" method="POST">
+        <form action="/notes/delete/{{_id}}?_method=DELETE" method="POST">
           <input type="hidden" name="_method" value="DELETE">
-          <button type="submit" class="boton btn">Delete</button>
+          <button type="submit" class="btn btn-danger btn-block btn-sm">Delete</button>
         </form>
       </div>
     </div>
   </div>
   {{else}}
-  <div class="carta mx-auto">
-    <div class="carta-body">
-      <div class="carta-title">
-        <h1>Hello {{user.name}}</h1>
-      </div>
-      <p class="carta-title">There are not Locs yet.</p>
-      <a href="/add_loc" class="boton btn">Create One!</a>
+  <div class="card mx-auto">
+    <div class="card-body">
+      <h1>Hello {{user.name}}</h1>
+      <p clsss="lead">There are not Notes yet.</p>
+      <a href="/notes/add" class="btn btn-success btn-block">Create One!</a>
     </div>
   </div>
   {{/each}}
 </div>
-<div class="separacion"></div>
-<footer class="footer fondo-negro">
-        <div class="barra">
-            <a class="logo">
-                <h1 class="logo__nombre no-margin centrar-texto texto-blanco">Cow<span class="logo__bold">Localizer</span></h1>
-            </a>
-        </div>
-</footer>

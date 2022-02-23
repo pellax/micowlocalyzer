@@ -1,19 +1,9 @@
 const { Router } = require('express');
 const router = Router();
 
-const { sendgps, locs, addloc, removeloc, renderAddForm, getgps } = require ('../controllers/gps.controlers');
-const { isAuthenticated} = require('../helpers/auth.js');
+const  { getgps } = require ('../controllers/gps.controlers');
 
-router.get('/locs', isAuthenticated, locs);
 
-router.post('/add_loc', isAuthenticated, addloc);
-
-router.get('/add_loc', isAuthenticated, renderAddForm);
-
-router.post('/send_gps',sendgps);
-
+router.post('/send_gps');
 router.get('/get_gps', getgps);
-
-router.delete('/remove_loc/:id', isAuthenticated, removeloc);
-
 module.exports = router;

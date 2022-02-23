@@ -398,13 +398,6 @@ h4 {
 .footer {
     height: 20rem;
     width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-
-.separacion {
-  padding-bottom:20rem;
 }
 
 /* Perfil */
@@ -435,36 +428,4 @@ h4 {
     display: block;
     width: 20%;
     margin: 0 auto;
-}
-
-/* Cards */
-.carta {
-  margin: 1rem auto;
-  width: min(30rem, 100%);
-  -webkit-box-shadow: 0px 0px 15px 0px rgba(234,190,63,1);
-  -moz-box-shadow: 0px 0px 15px 0px rgba(234,190,63,1);
-  box-shadow: 0px 0px 15px 0px rgba(234,190,63,1);
-  background-color: var(--negro-claro);
-  border-radius: 1rem;
-  align-items: center;
-  padding: 1rem;
-}
-
-.carta-body {
-  color: var(--blanco);
-}
-
-.carta-title {
-  display: flex;
-  justify-content: center;
-}
-
-.col-md-3 {
-  flex: 0 0 auto;
-  width: 20%;
-}
-
-.row {
-  width: 100%;
-  margin: auto;
 }
