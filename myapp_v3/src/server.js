@@ -49,6 +49,7 @@ app.use(require('./routes/users.routes'));
 app.use(require('./routes/gps.routes'));
 app.use(require('./routes/localizar.routes'));
 app.use(require('./routes/DataPacket.routes'));
+app.use(require('./routes/monitorization.routes'));
 app.use(require('./routes/RoutingTable.routes'));
 app.use(express.static(path.join(__dirname, '/public')));
 

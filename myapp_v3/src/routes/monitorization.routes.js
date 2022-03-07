@@ -3,10 +3,10 @@ const router = Router();
 //const ElasticClient = require("../elasticclient/elasticclient")
 //const { Client } = require('@elastic/elasticsearch')
 
-const  { sendRoutingTable } = require ('../controllers/RoutingTable.controlers');
-const { sendElasticControler } = require ('../controllers/elasticclient.controlers.js');
+const  { sendPacketTraffic } = require ('../controllers/PacketTraffic.controlers');
+
 //const bodyParser = require('body-parser').json();
 //const elasticClient = elastic.Client({node: 'localhost:9200'});
-router.post('/send_RoutingTable',sendRoutingTable);
+router.post('/send_PacketTraffic',sendPacketTraffic);
 //router.get('/get_gps', getgps);
 module.exports = router;
