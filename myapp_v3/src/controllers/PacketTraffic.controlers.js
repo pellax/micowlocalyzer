@@ -29,10 +29,12 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	const PacketTrafficPos = new PacketTraffic({recpackets,sendpackets,rechellopackets,sendhellopackets,datapackme,broadcast,fwdpackets,packetsforme,dstinyunreach,notforme,iamvia,localaddress,totalreceived});
    console.log("total received :"+totalreceived);
    console.log("iamvia content "+ivi);
+   console.log("local address is "+ladd);	
 	const Client = ElasticClient.getClient();
-	
+        const today = new Date();	
 	await Client.index({
-    index: 'monitorization2',
+    index: 'monitorization3',
+  // pipeline: 'hex-converter',		
     // type: '_doc', // uncomment this line if you are using {es} ≤ 6
     body: {
       recpackets: rp,
@@ -46,12 +48,14 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
       dstinyunreach:dst,
       notforme:nfm,
       iamvia: ivi,
-      localaddress:ladd,
-      totalreceived:totalreceived
+      localaddress:ladd.toString('utf-8'),
+      totalreceived:totalreceived,
+      timestamp:today
 
     }
   }).then(function(value){console.log(value)}).catch(function(e){
   console.log(e)})
+	await Client.indices.refresh({ index: 'monitorization3' })
 	await PacketTrafficPos.save().then(function(value){ 
 	   res.status(200).json({msg:"postoki"})
 	    }).catch(function(e){
