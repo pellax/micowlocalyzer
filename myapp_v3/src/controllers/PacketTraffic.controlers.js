@@ -24,7 +24,7 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	const notforme = nfm;
 	const iamvia = ivi ;
 	const localaddress = ladd;
-
+        let  senddatapackets = parseInt(sp)-parseInt(shp);
     
 	const PacketTrafficPos = new PacketTraffic({recpackets,sendpackets,rechellopackets,sendhellopackets,datapackme,broadcast,fwdpackets,packetsforme,dstinyunreach,notforme,iamvia,localaddress,totalreceived});
    console.log("total received :"+totalreceived);
@@ -50,6 +50,7 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
       iamvia: ivi,
       localaddress:ladd.toString('utf-8'),
       totalreceived:totalreceived,
+      senddatapackets:senddatapackets,	    
       timestamp:today
 
     }
