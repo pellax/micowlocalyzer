@@ -9,7 +9,7 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
     
 	const{rp,sp,rhp,shp,dpm,brd,fwd,pme,dst,nfm,ivi,ladd} = req.body;
     
-	let totalreceived = parseInt(rhp) + parseInt(rp) + parseInt(dpm) + parseInt(brd) + parseInt(ivi);
+	let totalreceived = parseInt(rhp) + parseInt(dpm) + parseInt(brd) + parseInt(ivi) + parseInt(nfm) ;
    
 	const recpackets = rp;
     
