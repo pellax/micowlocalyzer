@@ -1,6 +1,6 @@
 
 ### Readme
-SenderLora and ReceiverLoRa are not from this project.
+SenderLoRa and ReceiverLoRa are not from this project.
 Project cloned from original CowLocalizer.
 Inside directory myapp_v3 execute
 `docker-compose up `
