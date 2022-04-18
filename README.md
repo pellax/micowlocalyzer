@@ -1,6 +1,6 @@
 
 ### Readme
-Inside directory myappv3 execute
+Inside directory myapp_v3 execute
 `docker-compose up `
 
 
