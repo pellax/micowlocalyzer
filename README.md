@@ -9,7 +9,7 @@ It has several branches
 - single node is an Elastic server with one node
 - Master is an Elastic server with tree nodes
 - 8 Auth is an Elastic test server version 8, not working
-- 7 Auth is an Elastic server with authentication from elastic side with three nodes and the node side still to do.
+- Elastic7Auth is an Elastic server with authentication from elastic side with three nodes and the node side still to do.
 ## Set up 
 Inside directory myapp_v3 execute
 `docker-compose up `
