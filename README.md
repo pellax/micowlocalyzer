@@ -6,10 +6,10 @@ Project cloned from original CowLocalizer.
 ## Introduction
 Node server with Mongo database and ElasticSearch Engine, all connected with Elastic Javascript Client
 It has several branches
-- single node is an Elastic server with one node
-- Master is an Elastic server with tree nodes
+- single node is an Elastic server with node with one elastic node.
+- Master is an Elastic server with three elastic nodes
 - 8 Auth is an Elastic test server version 8, not working
-- Elastic7Auth is an Elastic server with authentication from elastic side with three nodes and the node side still to do.
+- Elastic7Auth is an Elastic server with authentication from elastic side with three Elastic nodes and the node side still to do.
 ## Set up 
 Inside directory myapp_v3 execute
 `docker-compose up `
