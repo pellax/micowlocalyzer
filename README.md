@@ -1,11 +1,13 @@
 
 ### Readme
+SenderLora and ReceiverLoRa are not from this project.
+Project cloned from original CowLocalizer.
 Inside directory myapp_v3 execute
 `docker-compose up `
 
 
-
-//Para node
+### Original Instructions
+//for node
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
