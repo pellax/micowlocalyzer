@@ -1,6 +1,9 @@
 
-###Readme
-Inside directory myapp
+### Readme
+Inside directory myappv3 execute
+`docker-compose up `
+
+
 
 //Para node
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
