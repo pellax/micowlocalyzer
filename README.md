@@ -11,7 +11,8 @@ It has several branches
 - 8 Auth is an Elastic test server version 8, not working
 - Elastic7Auth is an Elastic server with authentication from elastic side with three Elastic nodes and the node side still to do.
 ## Set up 
-Inside directory myapp_v3 execute
+1. First increase virtual memory heap, execute `sysctl -w vm.max_map_count=262144` in linux.
+2. Inside directory myapp_v3 execute
 `docker-compose up `
 
 
