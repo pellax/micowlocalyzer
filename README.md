@@ -14,6 +14,7 @@ It has several branches
 1. First increase virtual memory heap, execute `sysctl -w vm.max_map_count=262144` in linux.
 2. Inside directory myapp_v3 execute
 `docker-compose up `
+3. Wait for the log message `Kibana is now degraded` . The server is now ready for the incoming data.
 
 
 ### Original Instructions
