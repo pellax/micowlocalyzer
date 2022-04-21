@@ -2,9 +2,6 @@ const PacketTrafficCtrl = {};
 const ElasticClientCtrl = {};
 const PacketTraffic = require("../models/PacketTraffic")
 const ElasticClient = require("../elasticclient/elasticclient")
-//const { Client } = require('@elastic/elasticsearch')
-//require("dotenv").config();
-//const elasticUrl = "http://localhost:9200")
 PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
     
 	const{rp,sp,rhp,shp,dpm,brd,fwd,pme,dst,nfm,ivi,ladd} = req.body;
@@ -34,8 +31,6 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
         const today = new Date();	
 	await Client.index({
     index: 'monitorization3',
-  // pipeline: 'hex-converter',		
-    // type: '_doc', // uncomment this line if you are using {es} ≤ 6
     body: {
       recpackets: rp,
       sendpackets: sp,
