@@ -24,9 +24,12 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
         let  senddatapackets = parseInt(sp)-parseInt(shp);
     
 	const PacketTrafficPos = new PacketTraffic({recpackets,sendpackets,rechellopackets,sendhellopackets,datapackme,broadcast,fwdpackets,packetsforme,dstinyunreach,notforme,iamvia,localaddress,totalreceived});
-   console.log("total received :"+totalreceived);
-   console.log("iamvia content "+ivi);
-   console.log("local address is "+ladd);	
+	//DEBUG
+	//console.log("total received :"+totalreceived);
+	//DEBUG
+	//console.log("iamvia content "+ivi);
+	//DEBUG
+	//console.log("local address is "+ladd);
 	const Client = ElasticClient.getClient();
         const today = new Date();	
 	await Client.index({
@@ -49,7 +52,10 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
       timestamp:today
 
     }
-  }).then(function(value){console.log(value)}).catch(function(e){
+  }).then(function(value){
+		// DEBUG
+		//console.log(value)
+  }).catch(function(e){
   console.log(e)})
 	await Client.indices.refresh({ index: 'monitorization3' })
 	await PacketTrafficPos.save().then(function(value){ 
