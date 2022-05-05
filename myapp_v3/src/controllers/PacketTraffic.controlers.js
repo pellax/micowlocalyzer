@@ -57,6 +57,50 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 		//console.log(value)
   }).catch(function(e){
   console.log(e)})
+	await Client.index({
+    index: 'datalostpackets',
+    body: {
+      recpackets: rp,
+      sendpackets: sp,
+      rechellopackets:rhp,
+      sendhellopackets:shp,
+      datapackme:dpm,
+      broadcast:brd,
+      fwdpackets:fwd,
+      packetsforme:pme,
+      dstinyunreach:dst,
+      notforme:nfm,
+      iamvia: ivi,
+      localaddress:ladd.toString('utf-8'),
+	    
+    }
+  }).then(function(value){
+		// DEBUG
+		//console.log(value)
+  }).catch(function(e){
+  console.log(e)})
+	await Client.index({
+    index: 'hellolostpackets',
+    body: {
+      recpackets: rp,
+      sendpackets: sp,
+      rechellopackets:rhp,
+      sendhellopackets:shp,
+      datapackme:dpm,
+      broadcast:brd,
+      fwdpackets:fwd,
+      packetsforme:pme,
+      dstinyunreach:dst,
+      notforme:nfm,
+      iamvia: ivi,
+      localaddress:ladd.toString('utf-8'),
+	    
+    }
+  }).then(function(value){
+		// DEBUG
+		//console.log(value)
+  }).catch(function(e){
+  console.log(e)})
 	await Client.indices.refresh({ index: 'monitorization3' })
 	await PacketTrafficPos.save().then(function(value){ 
 	   res.status(200).json({msg:"postoki"})
