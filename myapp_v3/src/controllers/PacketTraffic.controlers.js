@@ -60,19 +60,12 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	await Client.index({
     index: 'datalostpackets',
     body: {
-      recpackets: rp,
-      sendpackets: sp,
-      rechellopackets:rhp,
-      sendhellopackets:shp,
-      datapackme:dpm,
-      broadcast:brd,
-      fwdpackets:fwd,
-      packetsforme:pme,
-      dstinyunreach:dst,
-      notforme:nfm,
-      iamvia: ivi,
       localaddress:ladd.toString('utf-8'),
-	    
+      lostpackets:0,
+      recpackets: rp,
+      sentdatapackets:senddatapackets,
+      theoreticalrecpackets:0,
+      timestamp:today
     }
   }).then(function(value){
 		// DEBUG
@@ -82,19 +75,12 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	await Client.index({
     index: 'hellolostpackets',
     body: {
-      recpackets: rp,
-      sendpackets: sp,
-      rechellopackets:rhp,
-      sendhellopackets:shp,
-      datapackme:dpm,
-      broadcast:brd,
-      fwdpackets:fwd,
-      packetsforme:pme,
-      dstinyunreach:dst,
-      notforme:nfm,
-      iamvia: ivi,
       localaddress:ladd.toString('utf-8'),
-	    
+      losthpackets:0,
+      rechpackets: rhp,
+      senthellopackets:shp,
+      theoreticalrecpackets:0,
+      timestamp:today
     }
   }).then(function(value){
 		// DEBUG
