@@ -77,9 +77,23 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
 	if(!empty)
 	{
-	for(let i in body.aggregations.unique_ids.buckets){
-
-	}
+         await Promise.all(body.aggregations.unique_ids.buckets.map(async(i) => 
+	 var obj = body.aggregations.unique_ids.buckets[i]
+		 await Client.UpdateByQuery({
+			 index:'datalostpackets',
+			 refresh: true,
+			 body:{
+			 
+				 script: {
+        
+					 lang: 'painless',
+        
+					 source: 'ctx._source.theoreticalrecpackets++'
+      }
+			 }
+		 })
+	 )
+	
 
 
 
