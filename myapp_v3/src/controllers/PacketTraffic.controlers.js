@@ -57,6 +57,21 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 		//console.log(value)
   }).catch(function(e){
   console.log(e)})
+	const { body } = await client.search({
+  index: 'datalostpackets',
+  body: {
+    query: {
+      
+    },
+    aggs:{
+        unique_ids: {
+            terms: {
+                field: localaddress
+            }
+        }
+    }
+  }
+})
 	await Client.index({
     index: 'datalostpackets',
     body: {
