@@ -61,17 +61,29 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
   index: 'datalostpackets',
   body: {
     query: {
+	    match_all: {
+    }
       
     },
     aggs:{
         unique_ids: {
             terms: {
-                field: localaddress
+                field: 'localaddress'
             }
         }
     }
-  }
+   
 })
+const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
+	if(!empty)
+	{
+	for(let i in body.aggregations.unique_ids.buckets){
+
+	}
+
+
+
+
 	await Client.index({
     index: 'datalostpackets',
     body: {
