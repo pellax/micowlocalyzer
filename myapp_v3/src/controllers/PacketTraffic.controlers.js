@@ -88,9 +88,53 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
         
 					 lang: 'painless',
         
-					 source: 'ctx._source.theoreticalrecpackets++'
+					 inline: 'ctx._source.theoreticalrecpackets++;ctx._source.lostpackets=theoreticalrecpackets-recpackets;'
       }
-			 }
+			 },
+			 query: {
+				 bool:{
+					 must:{
+
+                              
+				 
+					 match: {
+          
+					 
+						 localaddress: obj,
+					 },
+						 match:{
+
+						 
+					 
+							 timestamp: 'maxtimestamp'
+						 }
+					 }
+				 }
+        
+					 },
+				 aggs:{
+				 
+					 maxtimestamp:{
+						 filter:{
+							 term:{
+								 field:{
+									 localaddress:obj
+								 }
+							 }
+						 },
+					
+						 aggs:{
+						 
+							 max_timestamp:{
+								 max:{
+									 field:'timestamp'
+								 }
+							 }
+						 }
+						 }
+					 }
+				 }
+
 		 })
 	 )
 	
