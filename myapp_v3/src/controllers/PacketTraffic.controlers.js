@@ -49,7 +49,7 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
       localaddress:ladd.toString('utf-8'),
       totalreceived:totalreceived,
       senddatapackets:senddatapackets,	    
-      timestamp:today
+      timestamp:today.now()
 
     }
   }).then(function(value){
@@ -150,7 +150,7 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
       recpackets: rp,
       sentdatapackets:senddatapackets,
       theoreticalrecpackets:0,
-      timestamp:today
+      timestamp:today.now()
     }
   }).then(function(value){
 		// DEBUG
@@ -165,7 +165,7 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
       rechpackets: rhp,
       senthellopackets:shp,
       theoreticalrecpackets:0,
-      timestamp:today
+      timestamp:today.now()
     }
   }).then(function(value){
 		// DEBUG
