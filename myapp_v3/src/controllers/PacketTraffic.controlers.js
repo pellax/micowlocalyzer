@@ -31,8 +31,16 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	//DEBUG
 	//console.log("local address is "+ladd);
 	const Client = ElasticClient.getClient();
-        const today = new Date();	
+        let  today = new Date();	
+	const years = today.getFullYear();
+	const month = today.getMonth();
+	const days = today.getDate();
+	const hours = today.getHour();
+	const minutes = today.getMinutes();
+	const miliseconds = today.getMilliseconds();
+	today =`${years}-${month}-${days}T${hours}:${minutes}.${miliseconds}`
 	await Client.index({
+
     index: 'monitorization3',
     body: {
       recpackets: rp,
@@ -49,7 +57,7 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
       localaddress:ladd.toString('utf-8'),
       totalreceived:totalreceived,
       senddatapackets:senddatapackets,	    
-      timestamp:today.now()
+      timestamp:today
 
     }
   }).then(function(value){
@@ -93,51 +101,24 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
 			 },
 			 query: {
 				 bool:{
-					 must:{
-
-                              
-				 
-					 match: {
-          
-					 
-						 localaddress: obj,
-					 },
-						 match:{
-
-						 
-					 
-							 timestamp: 'maxtimestamp'
-						 }
+					 must:[{match: {localaddress: obj}},
+					       {match:{timestamp: 'maxtimestamp'}}]
 					 }
 				 }
         
-					 },
+					 ,
 				 aggs:{
-				 
-					 maxtimestamp:{
-						 filter:{
-							 term:{
-								 field:{
-									 localaddress:obj
-								 }
-							 }
+					 maxtimestamp:{filter:{match:{localaddress:obj}
 						 },
-					
-						 aggs:{
-						 
-							 max_timestamp:{
-								 max:{
-									 field:'timestamp'
-								 }
-							 }
+						aggs:{max_timestamp:{max:{field:'timestamp'}}
 						 }
 						 }
 					 }
-				 }
+				 
 
 		 })
 	 )
-	
+	}
 
 
 
@@ -150,7 +131,7 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
       recpackets: rp,
       sentdatapackets:senddatapackets,
       theoreticalrecpackets:0,
-      timestamp:today.now()
+      timestamp:today
     }
   }).then(function(value){
 		// DEBUG
@@ -165,7 +146,7 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
       rechpackets: rhp,
       senthellopackets:shp,
       theoreticalrecpackets:0,
-      timestamp:today.now()
+      timestamp:today
     }
   }).then(function(value){
 		// DEBUG
