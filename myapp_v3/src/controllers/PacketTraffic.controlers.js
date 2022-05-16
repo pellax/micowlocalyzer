@@ -81,12 +81,13 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
         }
     }
    
+}
 })
-const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
+const  empty = (body.aggregations.unique_ids.buckets?.length?true:false)
 	if(!empty)
 	{
-         await Promise.all(body.aggregations.unique_ids.buckets.map(async(i) => 
-	 var obj = body.aggregations.unique_ids.buckets[i]
+         await Promise.all(body.aggregations.unique_ids.buckets.map(async(i) =>{ 
+	 let obj = body.aggregations.unique_ids.buckets[i]
 		 await Client.UpdateByQuery({
 			 index:'datalostpackets',
 			 refresh: true,
@@ -116,8 +117,14 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
 					 }
 				 
 
+		 }).then(function(value){
+		 	console.log(value)
+		 }).catch(function(e){
+		 	console.log(e)
 		 })
-	 )
+		 }
+	
+	 ))
 	}
 
 
@@ -135,7 +142,7 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
     }
   }).then(function(value){
 		// DEBUG
-		//console.log(value)
+		console.log(value)
   }).catch(function(e){
   console.log(e)})
 	await Client.index({
@@ -150,7 +157,7 @@ const  empty = (body.aggregations.unique_ids.buckets?length?true:false)
     }
   }).then(function(value){
 		// DEBUG
-		//console.log(value)
+		console.log(value)
   }).catch(function(e){
   console.log(e)})
 	await Client.indices.refresh({ index: 'monitorization3' })
