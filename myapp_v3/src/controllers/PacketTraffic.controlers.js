@@ -35,10 +35,11 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	const years = today.getFullYear();
 	const month = today.getMonth();
 	const days = today.getDate();
-	const hours = today.getHour();
+	const hours = today.getHours();
 	const minutes = today.getMinutes();
+	const seconds = today.getSeconds();
 	const miliseconds = today.getMilliseconds();
-	today =`${years}-${month}-${days}T${hours}:${minutes}.${miliseconds}`
+	today =new Date(`${years}-${month}-${days}T${hours}:${minutes}:${seconds}.${miliseconds}`)
 	await Client.index({
 
     index: 'monitorization3',
@@ -65,29 +66,26 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 		//console.log(value)
   }).catch(function(e){
   console.log(e)})
-	const { body } = await client.search({
+	const { body } = await Client.search({
   index: 'datalostpackets',
   body: {
-    query: {
-	    match_all: {
-    }
-      
-    },
-    aggs:{
-        unique_ids: {
-            terms: {
-                field: 'localaddress'
-            }
-        }
+     aggs:{
+     	unique_ladd:{
+		terms:{
+			field:'localaddress'
+		}
+	}
+     }
     }
    
-}
-})
-const  empty = (body.aggregations.unique_ids.buckets?.length?true:false)
+
+}).then(async function(value){
+	console.log(value)
+	const  empty = (value.aggregations.unique_ladd.buckets?.length?true:false)
 	if(!empty)
 	{
-         await Promise.all(body.aggregations.unique_ids.buckets.map(async(i) =>{ 
-	 let obj = body.aggregations.unique_ids.buckets[i]
+         await Promise.all(value.aggregations.unique_ladd.buckets.map(async(i) =>{ 
+	 let obj = await value.aggregations.unique_ladd.buckets[i]
 		 await Client.UpdateByQuery({
 			 index:'datalostpackets',
 			 refresh: true,
@@ -124,10 +122,16 @@ const  empty = (body.aggregations.unique_ids.buckets?.length?true:false)
 		 })
 		 }
 	
-	 ))
+	 )
+	 ).then(function(value){
+	 	console.log(value)
+	 }).catch(function(e){
+		console.log(e)
+	 })
 	}
-
-
+}).catch(function(e){
+	console.log(e)
+})
 
 
 	await Client.index({
