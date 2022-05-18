@@ -84,6 +84,7 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	const  empty = (value.aggregations.unique_ladd.buckets?.length?true:false)
 	if(!empty)
 	{
+		try{
          await Promise.all(value.aggregations.unique_ladd.buckets.map(async(i) =>{ 
 	 let obj = await value.aggregations.unique_ladd.buckets[i]
 		 await Client.UpdateByQuery({
@@ -128,6 +129,10 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	 }).catch(function(e){
 		console.log(e)
 	 })
+		}catch(error){
+		
+			log.error(error);
+		}
 	}
 }).catch(function(e){
 	console.log(e)
