@@ -146,9 +146,10 @@ const UpdateQuery = async (value, Client) => {
 
 
 				})
+				
 			})
 			)
-			return myquery
+			
 		} catch (error) {
 			console.log(error)
 		}
