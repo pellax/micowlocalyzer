@@ -31,7 +31,8 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 	//DEBUG
 	//console.log("local address is "+ladd);
 	const Client = ElasticClient.getClient();
-	let today = new Date();
+	let todaystring = new Date();
+	let today = new Date()
 	const years = today.getFullYear();
 	const month = today.getMonth();
 	const days = today.getDate();
@@ -39,36 +40,40 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 	const minutes = today.getMinutes();
 	const seconds = today.getSeconds();
 	const miliseconds = today.getMilliseconds();
-	today = new Date(`${years}-${month}-${days}T${hours}:${minutes}:${seconds}.${miliseconds}`)
-	indexMonitorization(Client, rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd, totalreceived, senddatapackets, today).then(function (value) {
+	//const todaystring = `${years}-${month}-${days}T${hours}:${minutes}:${seconds}.${miliseconds}Z`
+	console.log(today.toISOString())
+	//today = new Date(todaystring.toISOString())
+	indexMonitorization(Client, rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd, totalreceived, senddatapackets, today,todaystring).then(function (value) {
 		// DEBUG
-		//console.log(value)
+		console.log(value)
 	}).catch(function (e) {
 		console.log(e)
 	})
 	const { body } = getLocalAddress(Client).then(async function (value) {
 		console.log(value)
-		UpdateQuery(value, Client).then(function (value) {
-			console.log(value)
+		UpdateQuery(value, Client,localaddress).then(function (value) {
+			//console.log(value)
 		}).catch(function (e) {
 			console.log(e)
 		})
 	}).catch(function (e) {
 		console.log(e)
 	})
-	const index = indexDataLost(Client, ladd, rp, senddatapackets, today).then(function (value) {
+	const index = indexDataLost(Client, ladd, rp, senddatapackets, today,todaystring).then(function (value) {
 		// DEBUG
-		console.log(value)
+		//console.log(value)
 	}).catch(function (e) {
 		console.log(e)
 	})
-	const indexhello = indexHelloLost(Client, ladd, rhp, shp, today).then(function (value) {
+	const indexhello = indexHelloLost(Client, ladd, rhp, shp, today,todaystring).then(function (value) {
 		// DEBUG
-		console.log(value)
+		//console.log(value)
 	}).catch(function (e) {
 		console.log(e)
 	})
 	await Client.indices.refresh({ index: 'monitorization3' })
+	await Client.indices.refresh({ index: 'datalostpackets'})
+	await Client.indices.refresh({ index: 'hellolostpackets'})
 	await PacketTrafficPos.save().then(function (value) {
 		res.status(200).json({ msg: "postoki" })
 	}).catch(function (e) {
@@ -105,7 +110,7 @@ const getLocalAddress = async (Client) => {
 		console.log(error)
 	}
 }
-const UpdateQuery = async (value, Client) => {
+const UpdateQuery = async (value, Client,localaddress) => {
 	console.log(value)
 	const empty = (value.aggregations.unique_ladd.buckets?.length ? true : false)
 	if (!empty) {
@@ -113,6 +118,8 @@ const UpdateQuery = async (value, Client) => {
 		try {
 			await Promise.all(value.aggregations.unique_ladd.buckets.map(async (i) => {
 				let obj = value.aggregations.unique_ladd.buckets[i]
+				if(obj != localaddress)
+				{
 				const myquery = await Client.UpdateByQuery({
 					index: 'datalostpackets',
 					refresh: true,
@@ -146,7 +153,7 @@ const UpdateQuery = async (value, Client) => {
 
 
 				})
-				
+			}
 			})
 			)
 			
@@ -157,7 +164,7 @@ const UpdateQuery = async (value, Client) => {
 	}
 }
 
-const indexDatalost = async (Client, ladd, rp, senddatapackets, today) => {
+const indexDataLost = async (Client, ladd, rp, senddatapackets, today,todaystring) => {
 	try {
 		const indexret = await Client.index({
 			index: 'datalostpackets',
@@ -167,7 +174,7 @@ const indexDatalost = async (Client, ladd, rp, senddatapackets, today) => {
 				recpackets: rp,
 				sentdatapackets: senddatapackets,
 				theoreticalrecpackets: 0,
-				timestamp: today
+				timestamp: today.setTime(Date.parse(todaystring.toISOString()))
 			}
 		})
 		return indexret
@@ -177,7 +184,7 @@ const indexDatalost = async (Client, ladd, rp, senddatapackets, today) => {
 
 }
 
-const indexHellolost = async (Client, ladd, rhp, shp, today) => {
+const indexHelloLost = async (Client, ladd, rhp, shp, today,todaystring) => {
 	try {
 		const index = await Client.index({
 			index: 'hellolostpackets',
@@ -187,7 +194,7 @@ const indexHellolost = async (Client, ladd, rhp, shp, today) => {
 				rechpackets: rhp,
 				senthellopackets: shp,
 				theoreticalrecpackets: 0,
-				timestamp: today
+				timestamp: today.setTime(Date.parse(todaystring.toISOString()))
 			}
 		})
 		return index
@@ -197,7 +204,7 @@ const indexHellolost = async (Client, ladd, rhp, shp, today) => {
 	}
 
 }
-const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd, totalreceived, senddatapackets, today) => {
+const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd, totalreceived, senddatapackets, today,todaystring) => {
 	try {
 		const index = await Client.index({
 
@@ -217,7 +224,7 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme,
 				localaddress: ladd.toString('utf-8'),
 				totalreceived: totalreceived,
 				senddatapackets: senddatapackets,
-				timestamp: today
+				timestamp: today.setTime(Date.parse(todaystring.toISOString()))
 
 			}
 		})
