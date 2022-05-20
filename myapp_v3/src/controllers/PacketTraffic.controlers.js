@@ -41,35 +41,37 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 	const seconds = today.getSeconds();
 	const miliseconds = today.getMilliseconds();
 	//const todaystring = `${years}-${month}-${days}T${hours}:${minutes}:${seconds}.${miliseconds}Z`
-	console.log(today.toISOString())
+	//console.log(today.toISOString())
 	//today = new Date(todaystring.toISOString())
 	indexMonitorization(Client, rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd, totalreceived, senddatapackets, today,todaystring).then(function (value) {
 		// DEBUG
-		console.log(value)
+		//console.log(value)
 	}).catch(function (e) {
-		console.log(e)
+		//console.log(e)
 	})
-	const { body } = getLocalAddress(Client).then(async function (value) {
+	const { body } = getLocalAddress(Client).then(value => {
+		UpdateQuery(value, Client,localaddress)
 		console.log(value)
-		UpdateQuery(value, Client,localaddress).then(function (value) {
+		/*.then(function (value) {
 			//console.log(value)
 		}).catch(function (e) {
-			console.log(e)
-		})
+			//console.log(e)
+		})*/
 	}).catch(function (e) {
-		console.log(e)
+		//console.log(e)
 	})
+	
 	const index = indexDataLost(Client, ladd, rp, senddatapackets, today,todaystring).then(function (value) {
 		// DEBUG
 		//console.log(value)
 	}).catch(function (e) {
-		console.log(e)
+		//console.log(e)
 	})
 	const indexhello = indexHelloLost(Client, ladd, rhp, shp, today,todaystring).then(function (value) {
 		// DEBUG
 		//console.log(value)
 	}).catch(function (e) {
-		console.log(e)
+		//console.log(e)
 	})
 	await Client.indices.refresh({ index: 'monitorization3' })
 	await Client.indices.refresh({ index: 'datalostpackets'})
@@ -105,60 +107,42 @@ const getLocalAddress = async (Client) => {
 
 
 		})
+		
 		return response
 	} catch (error) {
-		console.log(error)
+		//console.log(error)
 	}
 }
 const UpdateQuery = async (value, Client,localaddress) => {
-	console.log(value)
+	//console.log(value)
 	const empty = (value.aggregations.unique_ladd.buckets?.length ? true : false)
 	if (!empty) {
 
 		try {
-			await Promise.all(value.aggregations.unique_ladd.buckets.map(async (i) => {
+			const loop = await Promise.all(value.aggregations.unique_ladd.buckets.map((i) => {
 				let obj = value.aggregations.unique_ladd.buckets[i]
+				console.log(obj)
 				if(obj != localaddress)
 				{
-				const myquery = await Client.UpdateByQuery({
-					index: 'datalostpackets',
-					refresh: true,
-					
-
-						script: {
-
-							lang: 'painless',
-
-							inline: 'ctx._source.theoreticalrecpackets++;ctx._source.lostpackets=theoreticalrecpackets-recpackets;'
-						}
-					,
-					query: {
-						bool: {
-							must: [{ match: { localaddress: obj } },
-							{ match: { timestamp: 'maxtimestamp' } }]
-						}
-					}
-
-					,
-					aggs: {
-						maxtimestamp: {
-							filter: {
-								match: { localaddress: obj }
-							},
-							aggs: {
-								max_timestamp: { max: { field: 'timestamp' } }
-							}
-						}
-					}
-
-
+				const myquerydata = updateDataLost(Client,obj).then(function (value) {
+					// DEBUG
+					console.log(value)
+				}).catch(function (e) {
+					console.log(e)
 				})
+				const myqueryhello = updateHelloLost(Client,obj).then(function (value) {
+					// DEBUG
+					console.log(value)
+				}).catch(function (e) {
+					//console.log(e)
+				})
+
 			}
 			})
 			)
 			
 		} catch (error) {
-			console.log(error)
+			//console.log(error)
 		}
 
 	}
@@ -179,7 +163,7 @@ const indexDataLost = async (Client, ladd, rp, senddatapackets, today,todaystrin
 		})
 		return indexret
 	} catch (error) {
-		console.log(error)
+		//console.log(error)
 	}
 
 }
@@ -199,7 +183,7 @@ const indexHelloLost = async (Client, ladd, rhp, shp, today,todaystring) => {
 		})
 		return index
 	} catch (error) {
-		console.log(error)
+		//console.log(error)
 
 	}
 
@@ -231,7 +215,7 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme,
 
 		return index
 	} catch (error) {
-		console.log(error)
+		//console.log(error)
 	}
 
 }
@@ -242,6 +226,90 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme,
 //     data: gps
 // });
 //}
+
+const UpdateDatalostpackets = async(Client,obj) => {
+	try {
+	const update = await Client.updateByQuery({
+	index: 'datalostpackets',
+	refresh: true,
+	
+	 body:{
+		script: {
+
+			lang: 'painless',
+
+			source: 'ctx._source.theoreticalrecpackets++;ctx._source.lostpackets=theoreticalrecpackets-recpackets;'
+		}
+	}
+	,
+	query: {
+		bool: {
+			must: [{ match: { localaddress: obj } },
+			{ match: { timestamp: 'maxtimestamp' } }]
+		}
+	}
+
+	,
+	aggs: {
+		maxtimestamp: {
+			filter: {
+				match: { localaddress: obj }
+			},
+			aggs: {
+				max_timestamp: { max: { field: 'timestamp' } }
+			}
+		}
+	}
+
+
+})
+return update
+	}catch(error){
+		//console.log(error)
+	}
+}
+
+const updateHelloLostPackets = async(Client,obj) => {
+	try{
+	const update = await Client.updateByQuery({
+	index: 'hellolostpackets',
+	refresh: true,
+	body:{
+
+		script: {
+
+			lang: 'painless',
+
+			source: 'ctx._source.theoreticalrecpackets++;ctx._source.losthpackets=theoreticalrecpackets-rechpackets;'
+		}
+	}
+	,
+	query: {
+		bool: {
+			must: [{ match: { localaddress: obj } },
+			{ match: { timestamp: 'maxtimestamp' } }]
+		}
+	}
+
+	,
+	aggs: {
+		maxtimestamp: {
+			filter: {
+				match: { localaddress: obj }
+			},
+			aggs: {
+				max_timestamp: { max: { field: 'timestamp' } }
+			}
+		}
+	}
+
+
+})
+return update
+}catch(error){
+	//console.log(error)
+}
+}
 module.exports = PacketTrafficCtrl;
 
 
