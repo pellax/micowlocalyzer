@@ -51,7 +51,7 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 	})
 	const { body } = getLocalAddress(Client).then(value => {
 		UpdateQuery(value, Client,localaddress)
-		console.log(value)
+		//console.log(value)
 		/*.then(function (value) {
 			//console.log(value)
 		}).catch(function (e) {
@@ -115,32 +115,34 @@ const getLocalAddress = async (Client) => {
 }
 const UpdateQuery = async (value, Client,localaddress) => {
 	//console.log(value)
-	const empty = (value.aggregations.unique_ladd.buckets?.length ? true : false)
-	if (!empty) {
+	const nonempty = (value.aggregations.unique_ladd.buckets?.length ? true : false)
+	console.log(nonempty)
+	if (nonempty) {
 
 		try {
-			const loop = await Promise.all(value.aggregations.unique_ladd.buckets.map((i) => {
-				let obj = value.aggregations.unique_ladd.buckets[i]
-				console.log(obj)
+			const loop = await Promise.allSettled(value.aggregations.unique_ladd.buckets.map(async (i) => {
+				let obj = i
+				console.log(obj['key'])
+				console.log(localaddress)
+
 				if(obj != localaddress)
 				{
-				const myquerydata = updateDataLost(Client,obj).then(function (value) {
-					// DEBUG
-					console.log(value)
-				}).catch(function (e) {
-					console.log(e)
-				})
-				const myqueryhello = updateHelloLost(Client,obj).then(function (value) {
-					// DEBUG
-					console.log(value)
-				}).catch(function (e) {
+				const myquerydata =  updateDataLostPackets(Client,i).catch(function (e) {
 					//console.log(e)
 				})
+				const myqueryhello = updateHelloLostPackets(Client,i).catch(function (e) {
+					//console.log(e)
+				})
+			
 
 			}
 			})
-			)
-			
+			).then(function(value){
+				//console.log(value)
+			}).catch(function(e){
+				//console.log(e)
+			})
+			return loop
 		} catch (error) {
 			//console.log(error)
 		}
@@ -161,6 +163,7 @@ const indexDataLost = async (Client, ladd, rp, senddatapackets, today,todaystrin
 				timestamp: today.setTime(Date.parse(todaystring.toISOString()))
 			}
 		})
+		
 		return indexret
 	} catch (error) {
 		//console.log(error)
@@ -227,7 +230,7 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme,
 // });
 //}
 
-const UpdateDatalostpackets = async(Client,obj) => {
+const updateDataLostPackets = async(Client,obj) => {
 	try {
 	const update = await Client.updateByQuery({
 	index: 'datalostpackets',
@@ -238,34 +241,28 @@ const UpdateDatalostpackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx._source.theoreticalrecpackets++;ctx._source.lostpackets=theoreticalrecpackets-recpackets;'
+			source: 'ctx._source.theoreticalrecpackets++;ctx._source.lostpackets=ctx._source.theoreticalrecpackets-ctx._source.recpackets'
 		}
 	}
 	,
 	query: {
 		bool: {
-			must: [{ match: { localaddress: obj } },
-			{ match: { timestamp: 'maxtimestamp' } }]
+			must: [{ match: { localaddress: obj['key'] } }]
 		}
 	}
 
 	,
-	aggs: {
-		maxtimestamp: {
-			filter: {
-				match: { localaddress: obj }
-			},
-			aggs: {
-				max_timestamp: { max: { field: 'timestamp' } }
-			}
-		}
-	}
+	sort:{
+		timestamp:'desc'
+	},
+	max_docs:1
 
 
 })
+console.log(update)
 return update
 	}catch(error){
-		//console.log(error)
+		console.log(error)
 	}
 }
 
@@ -280,34 +277,30 @@ const updateHelloLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx._source.theoreticalrecpackets++;ctx._source.losthpackets=theoreticalrecpackets-rechpackets;'
+			source: 'ctx._source.theoreticalrecpackets++;ctx._source.losthpackets=ctx._source.theoreticalrecpackets-ctx._source.rechpackets;'
+
 		}
 	}
 	,
 	query: {
 		bool: {
-			must: [{ match: { localaddress: obj } },
-			{ match: { timestamp: 'maxtimestamp' } }]
+			must: [{ match: { localaddress: obj['key'] } }]
 		}
 	}
 
 	,
-	aggs: {
-		maxtimestamp: {
-			filter: {
-				match: { localaddress: obj }
-			},
-			aggs: {
-				max_timestamp: { max: { field: 'timestamp' } }
-			}
-		}
-	}
+	sort: {
+		timestamp:'desc'
+	
+	},
+	max_docs: 1
 
 
 })
+console.log(update)
 return update
 }catch(error){
-	//console.log(error)
+	console.log(error)
 }
 }
 module.exports = PacketTrafficCtrl;
