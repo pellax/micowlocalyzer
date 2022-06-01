@@ -252,10 +252,12 @@ const updateDataLostPackets = async(Client,obj) => {
 	}
 
 	,
-	sort:{
-		timestamp:'desc'
+	sort: [
+		{ timestamp : {format: 'strict_date_optional_time||epoch_millis'
 	},
-	max_docs:1
+	mode:'max'}
+	  ],
+	
 
 
 })
@@ -289,11 +291,13 @@ const updateHelloLostPackets = async(Client,obj) => {
 	}
 
 	,
-	sort: {
-		timestamp:'desc'
+	sort: [
+		{ timestamp : {format: 'strict_date_optional_time||epoch_millis'},
+	      mode:'max'}
+
+	  ],
+
 	
-	},
-	max_docs: 1
 
 
 })
