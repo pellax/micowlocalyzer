@@ -126,13 +126,26 @@ const UpdateQuery = async (value, Client,localaddress) => {
 				console.log(localaddress)
 
 				if(obj != localaddress)
+
+
 				{
-				const myquerydata =  updateDataLostPackets(Client,i).catch(function (e) {
+				const querydata = searchDataLostPackets(Client,obj).then(myquerydata => {
+					 updateDataLostPackets(Client,i,myquerydata)
+				 }).catch(function (e) {
 					//console.log(e)
+				 
+				}).catch(function(error){
+					console.log(e)
 				})
-				const myqueryhello = updateHelloLostPackets(Client,i).catch(function (e) {
-					//console.log(e)
+				const queryhello = searchHelloLostPackets(Client,obj).then(myqueryhello =>{
+					updateHelloLostPackets(Client,i,myqueryhello).catch(function (e) {
+						//console.log(e)
+					})
+
+				}).catch(function(error){
+					console.log(e)
 				})
+				
 			
 
 			}
@@ -230,7 +243,7 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme,
 // });
 //}
 
-const updateDataLostPackets = async(Client,obj) => {
+const updateDataLostPackets = async(Client,obj,myquerydata) => {
 	try {
 	const update = await Client.updateByQuery({
 	index: 'datalostpackets',
@@ -241,22 +254,23 @@ const updateDataLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx._source.theoreticalrecpackets++;ctx._source.lostpackets=ctx._source.theoreticalrecpackets-ctx._source.recpackets'
+			source: 'ctx._source.theoreticalrecpackets++;'
 		}
 	}
 	,
 	query: {
 		bool: {
 			must: [{ match: { localaddress: obj['key'] } }]
-		}
+		},
+		if_seq_no:parseInt(myquerydata.hits.hits['_seq_no'])
 	}
 
 	,
-	sort: [
-		{ timestamp : {format: 'strict_date_optional_time||epoch_millis'
-	},
-	mode:'max'}
-	  ],
+	sort: 
+		{ timestamp :'desc'}
+	  ,
+	 max_docs:1 
+	  
 	
 
 
@@ -268,7 +282,7 @@ return update
 	}
 }
 
-const updateHelloLostPackets = async(Client,obj) => {
+const updateHelloLostPackets = async(Client,obj,myqueryhello) => {
 	try{
 	const update = await Client.updateByQuery({
 	index: 'hellolostpackets',
@@ -279,7 +293,7 @@ const updateHelloLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx._source.theoreticalrecpackets++;ctx._source.losthpackets=ctx._source.theoreticalrecpackets-ctx._source.rechpackets;'
+			source: 'ctx._source.theoreticalrecpackets++;'
 
 		}
 	}
@@ -287,20 +301,90 @@ const updateHelloLostPackets = async(Client,obj) => {
 	query: {
 		bool: {
 			must: [{ match: { localaddress: obj['key'] } }]
-		}
+		},
+		if_seq_no:parseInt(myqueryhello.hits.hits['_seq_no'])
 	}
 
 	,
-	sort: [
-		{ timestamp : {format: 'strict_date_optional_time||epoch_millis'},
-	      mode:'max'}
+	sort: 
+		{ timestamp :'desc'}
+	  ,
 
-	  ],
+	max_docs: 1
 
+
+})
+
+console.log(update)
+return update
+}catch(error){
+	console.log(error)
+}
+}
+
+const searchHelloLostPackets = async(Client,obj) => {
+	try{
+	const update = await Client.updateByQuery({
+	index: 'hellolostpackets',
+	refresh: true,
+	body:{
+
+		query: {
+			bool: {
+				must: [{ match: { localaddress: obj['key'] } }]
+			}
+		}
+	
+		,
+		sort: 
+			{ timestamp :'desc'}
+		  ,
+	
+		size: 1,
+		
+	    seq_no_primary_term:'true'
+
+	}
 	
 
 
 })
+
+console.log(update)
+return update
+}catch(error){
+	console.log(error)
+}
+}
+
+const searchDataLostPackets = async(Client,obj) => {
+	try{
+	const update = await Client.search({
+	index: 'datalostpackets',
+	refresh: true,
+	body:{
+		query: {
+			bool: {
+				must: [{ match: { localaddress: obj['key'] } }]
+			}
+		}
+	
+		,
+		sort: 
+			{ timestamp :'desc'}
+		  ,
+	
+		size: 1,
+		
+	    seq_no_primary_term:'true'
+
+	
+	}
+	,
+	
+
+})
+
 console.log(update)
 return update
 }catch(error){
