@@ -126,29 +126,15 @@ const UpdateQuery = async (value, Client,localaddress) => {
 				console.log(localaddress)
 
 				if(obj != localaddress)
-
-
 				{
-				const querydata = searchDataLostPackets(Client,obj).then(myquerydata => {
-					 updateDataLostPackets(Client,i,myquerydata)
-				 }).catch(function (e) {
-					//console.log(e)
-				 
-				}).catch(function(error){
-					console.log(e)
-				})
-				const queryhello = searchHelloLostPackets(Client,obj).then(myqueryhello =>{
-					updateHelloLostPackets(Client,i,myqueryhello).catch(function (e) {
-						//console.log(e)
-					})
-
-				}).catch(function(error){
-					console.log(e)
-				})
 				
-			
-
-			}
+					 updateDataLostPackets(Client,i).catch(function (e) {
+					console.log(e);
+					 })
+					 updateHelloLostPackets(Client,i).catch(function (e) {
+						console.log(e);
+					})
+				}
 			})
 			).then(function(value){
 				//console.log(value)
@@ -243,7 +229,7 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme,
 // });
 //}
 
-const updateDataLostPackets = async(Client,obj,myquerydata) => {
+const updateDataLostPackets = async(Client,obj) => {
 	try {
 	const update = await Client.updateByQuery({
 	index: 'datalostpackets',
@@ -260,16 +246,19 @@ const updateDataLostPackets = async(Client,obj,myquerydata) => {
 	,
 	query: {
 		bool: {
-			must: [{ match: { localaddress: obj['key'] } }]
+			must: [{ match: { localaddress: obj['key'].toString() } }]
 		},
-		if_seq_no:parseInt(myquerydata.hits.hits['_seq_no'])
+		//if_seq_no:parseInt(myquerydata.hits.hits['_seq_no']),
+		
 	}
 
 	,
 	sort: 
-		{ timestamp :'desc'}
+		{ timestamp :'desc',ignore_unmpapped:true}
+	
 	  ,
-	 max_docs:1 
+	 max_docs:1 ,
+	 conflicts:'proceed'
 	  
 	
 
@@ -282,11 +271,11 @@ return update
 	}
 }
 
-const updateHelloLostPackets = async(Client,obj,myqueryhello) => {
+const updateHelloLostPackets = async(Client,obj) => {
 	try{
 	const update = await Client.updateByQuery({
 	index: 'hellolostpackets',
-	refresh: true,
+	refresh:true,
 	body:{
 
 		script: {
@@ -300,15 +289,18 @@ const updateHelloLostPackets = async(Client,obj,myqueryhello) => {
 	,
 	query: {
 		bool: {
-			must: [{ match: { localaddress: obj['key'] } }]
+			must: [{ match: { localaddress: obj['key'].toString() } }]
 		},
-		if_seq_no:parseInt(myqueryhello.hits.hits['_seq_no'])
+		//if_seq_no:parseInt(myqueryhello.hits.hits['_seq_no']),
+		
 	}
 
 	,
-	sort: 
-		{ timestamp :'desc'}
+	sort:
+		{ timestamp :'desc',ignore_unmpapped:true}
+	
 	  ,
+	  conflicts:'proceed',
 
 	max_docs: 1
 
@@ -324,25 +316,25 @@ return update
 
 const searchHelloLostPackets = async(Client,obj) => {
 	try{
-	const update = await Client.updateByQuery({
+	const update = await Client.search({
 	index: 'hellolostpackets',
-	refresh: true,
+	
 	body:{
 
 		query: {
 			bool: {
-				must: [{ match: { localaddress: obj['key'] } }]
+				must: [{ match: { localaddress: obj['key'].toString() } }]
 			}
 		}
 	
 		,
 		sort: 
-			{ timestamp :'desc'}
+			{ timestamp :'desc',ignore_unmpapped:true}
 		  ,
 	
 		size: 1,
 		
-	    seq_no_primary_term:'true'
+	    seq_no_primary_term:true
 
 	}
 	
@@ -361,11 +353,11 @@ const searchDataLostPackets = async(Client,obj) => {
 	try{
 	const update = await Client.search({
 	index: 'datalostpackets',
-	refresh: true,
+	
 	body:{
 		query: {
 			bool: {
-				must: [{ match: { localaddress: obj['key'] } }]
+				must: [{ match: { localaddress: obj['key'].toString() } }]
 			}
 		}
 	
@@ -376,7 +368,7 @@ const searchDataLostPackets = async(Client,obj) => {
 	
 		size: 1,
 		
-	    seq_no_primary_term:'true'
+	    seq_no_primary_term:true
 
 	
 	}
