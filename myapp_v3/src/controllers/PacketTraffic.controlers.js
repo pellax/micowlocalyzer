@@ -5,6 +5,7 @@ const ElasticClient = require("../elasticclient/elasticclient")
 PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 
 	const { rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd } = req.body;
+	
 
 	let totalreceived = parseInt(rhp) + parseInt(dpm) + parseInt(brd) + parseInt(ivi) + parseInt(nfm);
 
@@ -31,6 +32,7 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 	//DEBUG
 	//console.log("local address is "+ladd);
 	const Client = ElasticClient.getClient();
+	
 	let todaystring = new Date();
 	let today = new Date()
 	const years = today.getFullYear();
@@ -137,13 +139,13 @@ const UpdateQuery = async (value, Client,localaddress) => {
 				}
 			})
 			).then(function(value){
-				//console.log(value)
+				console.log(value)
 			}).catch(function(e){
-				//console.log(e)
+				console.log(e)
 			})
 			return loop
 		} catch (error) {
-			//console.log(error)
+			console.log(error)
 		}
 
 	}
@@ -165,7 +167,7 @@ const indexDataLost = async (Client, ladd, rp, senddatapackets, today,todaystrin
 		
 		return indexret
 	} catch (error) {
-		//console.log(error)
+		console.log(error)
 	}
 
 }
@@ -185,7 +187,7 @@ const indexHelloLost = async (Client, ladd, rhp, shp, today,todaystring) => {
 		})
 		return index
 	} catch (error) {
-		//console.log(error)
+		console.log(error)
 
 	}
 
@@ -240,7 +242,7 @@ const updateDataLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx._source.theoreticalrecpackets++;'
+			source: 'if(ctx._source.theoreticalrecpackets!=null){ctx._source.theoreticalrecpackets++;ctx.op="index";}else{ctx._source.theoreticalrecpackets=0;ctx.op="index";}'
 		}
 	}
 	,
@@ -282,7 +284,7 @@ const updateHelloLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx._source.theoreticalrecpackets++;'
+			source: 'if(ctx._source.theoreticalrecpackets!=null){ctx.op="index";ctx._source.theoreticalrecpackets++;}else{ctx.op="index";ctx._source.theoreticalrecpackets=0;}'
 
 		}
 	}
