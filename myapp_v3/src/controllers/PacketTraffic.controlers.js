@@ -129,13 +129,20 @@ const UpdateQuery = async (value, Client,localaddress) => {
 
 				if(obj != localaddress)
 				{
-				
-					 updateDataLostPackets(Client,i).catch(function (e) {
+				    searchHelloLostPackets(Client,i).then(value => {
+					 updateDataLostPackets(Client,i,value).catch(function (e) {
 					console.log(e);
 					 })
-					 updateHelloLostPackets(Client,i).catch(function (e) {
+					}).catch(function(e){
+						console.log(e)
+					})
+					searchDataLostPackets(Client,i).then(value => {
+					 updateHelloLostPackets(Client,i,value).catch(function (e) {
 						console.log(e);
 					})
+				}).catch(function(e){
+					console.log(e)
+				})
 				}
 			})
 			).then(function(value){
@@ -231,7 +238,7 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme,
 // });
 //}
 
-const updateDataLostPackets = async(Client,obj) => {
+const updateDataLostPackets = async(Client,obj,value) => {
 	try {
 	const update = await Client.updateByQuery({
 	index: 'datalostpackets',
@@ -260,7 +267,7 @@ const updateDataLostPackets = async(Client,obj) => {
 	
 	  ,
 	 max_docs:1 ,
-	 conflicts:'proceed'
+	 version:false
 	  
 	
 
@@ -273,8 +280,9 @@ return update
 	}
 }
 
-const updateHelloLostPackets = async(Client,obj) => {
+const updateHelloLostPackets = async(Client,obj,value) => {
 	try{
+	
 	const update = await Client.updateByQuery({
 	index: 'hellolostpackets',
 	refresh:true,
@@ -302,7 +310,7 @@ const updateHelloLostPackets = async(Client,obj) => {
 		{ timestamp :'desc',ignore_unmpapped:true}
 	
 	  ,
-	  conflicts:'proceed',
+	  version:false,
 
 	max_docs: 1
 
