@@ -118,44 +118,41 @@ const getLocalAddress = async (Client) => {
 const UpdateQuery = async (value, Client,localaddress) => {
 	//console.log(value)
 	const nonempty = (value.aggregations.unique_ladd.buckets?.length ? true : false)
+	const slot = 30000 / value.aggregations.unique_ladd.buckets.length 
 	console.log(nonempty)
 	if (nonempty) {
+		const turn = value.aggregations.unique_ladd.buckets.indexOf(localaddress)*slot
 
 		try {
-			const loop = await Promise.allSettled(value.aggregations.unique_ladd.buckets.map(async (i) => {
+			const loop = async(value.aggregations.unique_ladd.buckets) => 
+			{ 
+				for (const i of value.aggregations.unique_ladd.buckets){
+				
+
 				let obj = i
 				console.log(obj['key'])
 				console.log(localaddress)
 
 				if(obj != localaddress)
 				{
-				    searchHelloLostPackets(Client,i).then(value => {
+				    
 					 updateDataLostPackets(Client,i,value).catch(function (e) {
 					console.log(e);
 					 })
-					}).catch(function(e){
-						console.log(e)
-					})
-					searchDataLostPackets(Client,i).then(value => {
+					
+					
 					 updateHelloLostPackets(Client,i,value).catch(function (e) {
 						console.log(e);
 					})
-				}).catch(function(e){
-					console.log(e)
-				})
 				}
-			})
-			).then(function(value){
-				console.log(value)
-			}).catch(function(e){
-				console.log(e)
-			})
-			return loop
-		} catch (error) {
+				
+				}
+			}
+			} catch (error) {
 			console.log(error)
 		}
 
-	}
+	
 }
 
 const indexDataLost = async (Client, ladd, rp, senddatapackets, today,todaystring) => {
@@ -393,6 +390,12 @@ return update
 	console.log(error)
 }
 }
+
+function sleep(ms) {
+	return new Promise((resolve) => {
+	  setTimeout(resolve, ms);
+	});
+  }
 module.exports = PacketTrafficCtrl;
 
 
