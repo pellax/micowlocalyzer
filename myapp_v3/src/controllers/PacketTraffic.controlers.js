@@ -2,8 +2,10 @@ const PacketTrafficCtrl = {};
 const ElasticClientCtrl = {};
 const PacketTraffic = require("../models/PacketTraffic")
 const ElasticClient = require("../elasticclient/elasticclient")
+const lock = require("../semaphor/semaphor.js")
 PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
-
+	const sem = new Semaphor(1)
+	
 	const { rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd } = req.body;
 	
 
@@ -122,37 +124,17 @@ const UpdateQuery = async (value, Client,localaddress) => {
 	console.log(nonempty)
 	if (nonempty) {
 		const turn = value.aggregations.unique_ladd.buckets.indexOf(localaddress)*slot
-
+		await sleep(turn)
 		try {
-			const loop = async(value.aggregations.unique_ladd.buckets) => 
-			{ 
-				for (const i of value.aggregations.unique_ladd.buckets){
-				
-
-				let obj = i
-				console.log(obj['key'])
-				console.log(localaddress)
-
-				if(obj != localaddress)
-				{
-				    
-					 updateDataLostPackets(Client,i,value).catch(function (e) {
-					console.log(e);
-					 })
-					
-					
-					 updateHelloLostPackets(Client,i,value).catch(function (e) {
-						console.log(e);
-					})
-				}
-				
-				}
-			}
+			const result = loop(value.aggregations.unique_ladd.buckets,Client,value,localaddress).catch(e => {console.log(e)})
 			} catch (error) {
 			console.log(error)
 		}
 
+		
 	
+}
+return result;
 }
 
 const indexDataLost = async (Client, ladd, rp, senddatapackets, today,todaystring) => {
@@ -189,7 +171,7 @@ const indexHelloLost = async (Client, ladd, rhp, shp, today,todaystring) => {
 				timestamp: today.setTime(Date.parse(todaystring.toISOString()))
 			}
 		})
-		return index
+		return index;
 	} catch (error) {
 		console.log(error)
 
@@ -271,6 +253,7 @@ const updateDataLostPackets = async(Client,obj,value) => {
 
 })
 console.log(update)
+setTimeout(done, 5000);
 return update
 	}catch(error){
 		console.log(error)
@@ -315,6 +298,7 @@ const updateHelloLostPackets = async(Client,obj,value) => {
 })
 
 console.log(update)
+setTimeout(done, 5000);
 return update
 }catch(error){
 	console.log(error)
@@ -391,11 +375,41 @@ return update
 }
 }
 
+const loop = async (address,Client,value,localaddress) => 
+			{ 
+				const loop = await Promise.allSettled(value.aggregations.unique_ladd.buckets.map(async (i) => {
+				
+
+				let obj = i;
+				console.log(obj['key'])
+				console.log(localaddress)
+
+				if(obj != localaddress)
+				{
+				   
+					sem.take(updateDataLostPackets(Client,i,value)).catch(function (e) {
+					console.log(e)
+					 })
+					
+					
+					
+					 sem.take(updateHelloLostPackets(Client,i,value)).catch(function (e) {
+						console.log(e)
+					})
+					
+				}
+				
+				}))
+				return hello;
+			}
+
 function sleep(ms) {
 	return new Promise((resolve) => {
 	  setTimeout(resolve, ms);
 	});
   }
+
+ 
 module.exports = PacketTrafficCtrl;
 
 
