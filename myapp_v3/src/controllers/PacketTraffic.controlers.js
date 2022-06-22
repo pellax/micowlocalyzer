@@ -2,9 +2,9 @@ const PacketTrafficCtrl = {};
 const ElasticClientCtrl = {};
 const PacketTraffic = require("../models/PacketTraffic")
 const ElasticClient = require("../elasticclient/elasticclient")
-const lock = require("../semaphor/semaphor.js")
+
 PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
-	const sem = new Semaphor(1)
+	
 	
 	const { rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd } = req.body;
 	
@@ -54,7 +54,7 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 		//console.log(e)
 	})
 	const { body } = getLocalAddress(Client).then(value => {
-		UpdateQuery(value, Client,localaddress)
+		//UpdateQuery(value, Client,localaddress)
 		//console.log(value)
 		/*.then(function (value) {
 			//console.log(value)
@@ -123,6 +123,7 @@ const UpdateQuery = async (value, Client,localaddress) => {
 	const slot = 30000 / value.aggregations.unique_ladd.buckets.length 
 	console.log(nonempty)
 	if (nonempty) {
+		
 		const turn = value.aggregations.unique_ladd.buckets.indexOf(localaddress)*slot
 		await sleep(turn)
 		try {
