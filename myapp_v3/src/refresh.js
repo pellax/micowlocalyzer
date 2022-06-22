@@ -28,7 +28,7 @@ const updateDataLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;',
+			source: 'ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;if(ctx._source.theoreticalrecpackets != null){ctx._source.lostpackets=ctx._source.theoreticalrecpackets-ctx._source.recpackets;}else{ctx._source.theoreticalrecpackets=params.recpackets;;ctx._source.lostpackets=ctx._source.theoreticalrecpackets-ctx._source.recpackets;}',
 			params:{
 				recpackets:obj['doc_count']
 			}
@@ -48,7 +48,7 @@ const updateDataLostPackets = async(Client,obj) => {
 		{ timestamp :'desc',ignore_unmpapped:true}
 	
 	  ,
-	 max_docs:3 ,
+	 max_docs:1 ,
 	 version:false
 	  
 	
@@ -75,7 +75,7 @@ const updateHelloLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;',
+			source: 'ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;if(ctx._source.theoreticalrecpackets != null){ctx._source.losthpackets = ctx._source.theoreticalrecpackets - ctx._source.rechpackets;} else {ctx._source.theoreticalrecpackets=params.recpackets;ctx._source.losthpackets = ctx._source.theoreticalrecpackets - ctx._source.rechpackets;}',
 			params:{
 				recpackets:obj['doc_count']
 			}
@@ -97,7 +97,7 @@ const updateHelloLostPackets = async(Client,obj) => {
 	  ,
 	  version:false,
 
-	max_docs: 3
+	max_docs: 1
 
 
 })
@@ -169,7 +169,7 @@ return update
 }
 }
 
-const interval = setInterval(refresh,15000);
+const interval = setInterval(refresh,30000);
 module.exports = interval;
 
 
