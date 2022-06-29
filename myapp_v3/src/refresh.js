@@ -28,7 +28,7 @@ const updateDataLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;if(ctx._source.theoreticalrecpackets != null){ctx._source.lostpackets=ctx._source.theoreticalrecpackets-ctx._source.recpackets;}else{ctx._source.theoreticalrecpackets=params.recpackets;;ctx._source.lostpackets=ctx._source.theoreticalrecpackets-ctx._source.recpackets;}',
+			source: 'ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;if(ctx._source.theoreticalrecpackets != null){ctx.op="index";ctx._source.lostpackets=ctx._source.theoreticalrecpackets-ctx._source.recpackets;}else{ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;ctx.op="index";ctx._source.lostpackets=ctx._source.theoreticalrecpackets-ctx._source.recpackets;}',
 			params:{
 				recpackets:obj['doc_count']
 			}
@@ -75,7 +75,7 @@ const updateHelloLostPackets = async(Client,obj) => {
 
 			lang: 'painless',
 
-			source: 'ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;if(ctx._source.theoreticalrecpackets != null){ctx._source.losthpackets = ctx._source.theoreticalrecpackets - ctx._source.rechpackets;} else {ctx._source.theoreticalrecpackets=params.recpackets;ctx._source.losthpackets = ctx._source.theoreticalrecpackets - ctx._source.rechpackets;}',
+			source: 'ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;if(ctx._source.theoreticalrecpackets != null){ctx.op="index";ctx._source.losthpackets = ctx._source.theoreticalrecpackets - ctx._source.rechpackets;} else {ctx.op="index";ctx._source.theoreticalrecpackets=params.recpackets;ctx.op="index";ctx._source.losthpackets = ctx._source.theoreticalrecpackets - ctx._source.rechpackets;}',
 			params:{
 				recpackets:obj['doc_count']
 			}

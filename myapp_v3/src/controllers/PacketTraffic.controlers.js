@@ -49,7 +49,7 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 	//today = new Date(todaystring.toISOString())
 	indexMonitorization(Client, rp, sp, rhp, shp, dpm, brd, fwd, pme, dst, nfm, ivi, ladd, totalreceived, senddatapackets, today,todaystring).then(function (value) {
 		// DEBUG
-		//console.log(value)
+		console.log(value)
 	}).catch(function (e) {
 		//console.log(e)
 	})
