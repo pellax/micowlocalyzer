@@ -1,21 +1,43 @@
-const ElasticClient = require("./elasticclient/elasticclient")
+const ElasticClient = require("../elasticclient/elasticclient")
+let currentboards = 1;
+let running = false;
+theoreticalpackets = 0
 
 const refresh =async() => {
 Client = ElasticClient.getClient()
 const resulthello = await searchHelloLostPackets(Client).catch(e => {
 	console.log(e)
 })
-const resultData = await searchDataLostPackets(Client).catch(e => {
-	console.log(e)
-})
 
+const boards = resulthello.aggregations.localaddress.buckets.length()
+if (boards != currentboards){
+	updateBoards(boards)
+	updateBoardsHello(boards)
+	currentboards = boards
+}
+/*
 for(let i of resultData.aggregations.localaddress.buckets){
 	console.log(i)
 	await updateDataLostPackets(Client,i)
 	await updateHelloLostPackets(Client,i)
 
 }
+*/
 
+}
+
+const setRunning = () => {
+	running = true ;
+	theoreticalpackets = currentboards - 1
+	
+
+
+
+
+}
+
+const incTheoretical = () => {
+	theoreticalpackets += currentboards - 1
 }
 const updateDataLostPackets = async(Client,obj) => {
 	try {
@@ -110,6 +132,15 @@ return update
 }
 }
 
+const getNumPlacas =async() => {
+
+	const resulthello = await searchHelloLostPackets(Client).catch(e => {
+		console.log(e)
+	})
+	const boards = resulthello.aggregations.localaddress.buckets.length()
+    return boards;
+}
+
 const searchHelloLostPackets = async(Client) => {
 	try{
 	const update = await Client.search({
@@ -168,9 +199,60 @@ return update
 	console.log(error)
 }
 }
+const getFirst = () => {
 
+	const resulthello = await searchHelloLostPackets(Client).catch(e => {
+		console.log(e)
+	})
+
+	return resulthello.aggregations.localaddress.buckets[0]['key']
+
+}
+
+const updateBoards = async(boards) => {
+	try {
+		await client.update({
+			index: 'datalostpackets',
+			id: '2',
+			body: {
+			  script: {
+				lang: 'painless',
+				source: 'ctx._source.boardsinnet = boards',
+				params:{boards:boards}
+				// you can also use parameters
+				// source: 'ctx._source.times += params.count',
+				// params: { count: 1 }
+			  }
+			}
+		  })
+	}catch(error){
+		console.log(error)
+	}
+}
+
+const updateBoardsHello = async(boards) => {
+	try {
+		await client.update({
+			index: 'hellolostpackets',
+			id: '3',
+			body: {
+			  script: {
+				lang: 'painless',
+				source: 'ctx._source.boardsinnet = boards',
+				params:{boards:boards}
+				// you can also use parameters
+				// source: 'ctx._source.times += params.count',
+				// params: { count: 1 }
+			  }
+			}
+		  })
+	}catch(error){
+		console.log(error)
+	}
+}
+setTimeout(() => {  console.log("Waiting"); }, 15000);
 const interval = setInterval(refresh,30000);
-module.exports = interval;
+module.exports = {interval,getNumPlacas,getFirst};
 
 
 

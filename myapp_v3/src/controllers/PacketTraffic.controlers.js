@@ -148,6 +148,7 @@ const indexDataLost = async (Client, ladd, rp, senddatapackets, today,todaystrin
 				recpackets: rp,
 				sentdatapackets: senddatapackets,
 				theoreticalrecpackets: 0,
+				boardsinnet:1,
 				timestamp: today.setTime(Date.parse(todaystring.toISOString()))
 			}
 		})
@@ -169,6 +170,7 @@ const indexHelloLost = async (Client, ladd, rhp, shp, today,todaystring) => {
 				rechpackets: rhp,
 				senthellopackets: shp,
 				theoreticalrecpackets: 0,
+				boardsinnet:1,
 				timestamp: today.setTime(Date.parse(todaystring.toISOString()))
 			}
 		})
