@@ -8,7 +8,7 @@ const PacketTrafficSchema = new Schema({
         datapackme: {type: String, required: true},
         broadcast: {type: String, required: true},
         fwdpackets: {type: String, required: true},
-        packetsforme: {type: String, required: true},
+        queuesendsize: {type: String, required: true},
         dstinyunreach: {type: String, required: true},
         notforme: {type:String, required: true},
         iamvia: {type:String, required: true},

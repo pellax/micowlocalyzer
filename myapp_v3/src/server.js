@@ -44,13 +44,7 @@ app.use((req, res, next) => {
 app.get('/',(req,res)=>{
     res.render('./index');
 });
-app.use(require('./routes/test.routes'));
-app.use(require('./routes/users.routes'));
-app.use(require('./routes/gps.routes'));
-app.use(require('./routes/localizar.routes'));
-app.use(require('./routes/DataPacket.routes'));
 app.use(require('./routes/monitorization.routes'));
-app.use(require('./routes/RoutingTable.routes'));
 app.use(express.static(path.join(__dirname, '/public')));
 
 //Static files --Archivos que el navegador puede pedir directamente.

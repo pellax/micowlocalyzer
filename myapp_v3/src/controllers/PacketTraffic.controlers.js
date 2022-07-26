@@ -4,7 +4,7 @@ const PacketTraffic = require("../models/PacketTraffic")
 const ElasticClient = require("../elasticclient/elasticclient")
 PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
     
-	const{rp,sp,rhp,shp,dpm,brd,fwd,pme,dst,nfm,ivi,ladd} = req.body;
+	const{rp,sp,rhp,shp,dpm,brd,fwd,qss,dst,nfm,ivi,ladd} = req.body;
     
 	let totalreceived = parseInt(rhp) + parseInt(dpm) + parseInt(brd) + parseInt(ivi) + parseInt(nfm) ;
    
@@ -16,14 +16,14 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
 	const datapackme = dpm;
 	const broadcast = brd;
 	const fwdpackets = fwd;
-	const packetsforme = pme;
+	const queuesendsize = qss;
 	const dstinyunreach = dst;
 	const notforme = nfm;
 	const iamvia = ivi ;
 	const localaddress = ladd;
         let  senddatapackets = parseInt(sp)-parseInt(shp);
     
-	const PacketTrafficPos = new PacketTraffic({recpackets,sendpackets,rechellopackets,sendhellopackets,datapackme,broadcast,fwdpackets,packetsforme,dstinyunreach,notforme,iamvia,localaddress,totalreceived});
+	const PacketTrafficPos = new PacketTraffic({recpackets,sendpackets,rechellopackets,sendhellopackets,datapackme,broadcast,fwdpackets,queuesendsize,dstinyunreach,notforme,iamvia,localaddress,totalreceived});
 	//DEBUG
 	//console.log("total received :"+totalreceived);
 	//DEBUG
@@ -42,7 +42,7 @@ PacketTrafficCtrl.sendPacketTraffic= async (req,res)=>{
       datapackme:dpm,
       broadcast:brd,
       fwdpackets:fwd,
-      packetsforme:pme,
+      queuesendsize:qss,
       dstinyunreach:dst,
       notforme:nfm,
       iamvia: ivi,
