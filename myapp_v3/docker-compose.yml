@@ -17,7 +17,8 @@ services:
     links:
       - es01
     depends_on:
-      - es01    
+      - es01  
+      - kib01
     networks:
       - myappnetwork
   mongo: 

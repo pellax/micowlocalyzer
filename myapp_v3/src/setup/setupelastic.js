@@ -1,24 +1,30 @@
 const ElastiClient = require("../elasticclient/elasticclient")
 const client = ElastiClient.getClient();
 
-const createTables = async() => {
-    const existdata = await existData().catch(e => console.log(e))
-    const existmonitorization = await existMonitorization().catch(e => console.log(e))
-    const existhello = await existHello().catch( e => console.log(e))
-    if(existmonitorization == true){
-    
-      await deleteMonitorization().catch(e => console.log(e))
-  }
-    if(existhello == true){
-    await deleteHelloLostPackets().catch(e => console.log(e))
-  }
-  if (existdata == true){
-    await deleteDataLostPackets().catch(e => console.log(e))
-  }
-    await createMonitorization().catch(e => console.log(e))
-    await createDataLostPackets().catch(e => console.log(e))
-    await createHelloLostPackets().catch(e => console.log(e))
-
+const createTables =async() => {
+    const existdata = await existData().then((exist) =>
+	    {
+	    if(!exist)
+	    {
+		   createDataLostPackets().catch(e => console.log(e))
+	    }
+	    }
+	    ).catch(e => console.log(e))
+    const existmonitorization =await existMonitorization().then((exist) => {
+	    if(!exist) {
+		    createMonitorization().catch(e => console.log(e))
+	    }
+    }
+    ).catch(e => console.log(e))
+    const existhello = await existHello().then((exist) => 
+	    {
+	    if(!exist)
+	    {
+		    createHelloLostPackets().catch(e => console.log(e))
+	    }
+	    }
+    ).catch( e => console.log(e))
+   
 }
 
 
@@ -60,7 +66,7 @@ const createMonitorization = async() => {
                   notforme : {
                     type : 'integer'
                   },
-                  packetsforme : {
+                  queuesendsize : {
                     type : 'integer'
                   },
                   rechellopackets : {
@@ -91,6 +97,7 @@ const createMonitorization = async() => {
         }
       })
       console.log(create)
+	  return create
     }catch(error){
       console.log(error)
     }
