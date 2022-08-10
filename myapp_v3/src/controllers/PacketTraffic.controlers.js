@@ -204,7 +204,7 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, pme,
 				datapackme: dpm,
 				broadcast: brd,
 				fwdpackets: fwd,
-				queuesendsize = qss;
+				queuesendsize: qss,
 				dstinyunreach: dst,
 				notforme: nfm,
 				iamvia: ivi,
