@@ -38,7 +38,7 @@ const createMonitorization = async() => {
         refresh: 'true',
         body:{
             mappings : {
-                properties : {
+                
                   broadcast : {
                     type : 'integer'
                   },
@@ -55,14 +55,9 @@ const createMonitorization = async() => {
                     type : 'integer'
                   },
                  localaddress : {
-                    type: 'keyword',
-                  fields: {
-                    keyword: { 
-                      type: 'keyword'
-                    }
-                  }
-                     
-                   },
+                    type: 'keyword'
+                  
+                  },
                   notforme : {
                     type : 'integer'
                   },
@@ -111,7 +106,7 @@ const createMonitorization = async() => {
                   totalreceived : {
                     type : 'integer'
                   }
-                }
+                
               }
         }
       })
