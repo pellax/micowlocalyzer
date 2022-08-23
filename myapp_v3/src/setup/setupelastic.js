@@ -1,29 +1,39 @@
 const ElastiClient = require("../elasticclient/elasticclient")
 const client = ElastiClient.getClient();
 
-const createTables =async() => {
-    const existdata = await existData().then((exist) =>
-	    {
-	    if(!exist)
+const createTables = async() => {
+    const existdata =existData().then(res => {
+	    console.log(res)
+      if(!res)
 	    {
 		   createDataLostPackets().catch(e => console.log(e))
 	    }
-	    }
-	    ).catch(e => console.log(e))
-    const existmonitorization =await existMonitorization().then((exist) => {
-	    if(!exist) {
-		    createMonitorization().catch(e => console.log(e))
-	    }
-    }
-    ).catch(e => console.log(e))
-    const existhello = await existHello().then((exist) => 
+    }).catch(e => console.log(e))
+	    
+	    
+	    
+    const existmonitorization = existMonitorization().then((res) => {
+      if(!res){	    
+        createMonitorization().catch(e => console.log(e))
+      }
+
+}).catch(e=>console.log(e))
+	
+    
+   
+    const existhello = existHello().then(async(res) =>{
+      if(!res)
 	    {
-	    if(!exist)
-	    {
-		    createHelloLostPackets().catch(e => console.log(e))
+		const createhello =  await createHelloLostPackets().catch(e => console.log(e))
+	    	return createhello
 	    }
-	    }
-    ).catch( e => console.log(e))
+	    
+
+    }).catch(e=>console.log(e))
+	    
+	   
+	return existhello    
+   
    
 }
 
@@ -31,14 +41,12 @@ const createTables =async() => {
 const createMonitorization = async() => {
   try{ 
 
-  const create = await client.create({
-        id: '1',
+  const create = await client.indices.create({
         index: 'monitorization3',
-        wait_for_active_shards: '1',
-        refresh: 'true',
-        body:{
+	        wait_for_active_shards: '1',
+             body:{
             mappings : {
-                
+		    properties :{ 
                   broadcast : {
                     type : 'integer'
                   },
@@ -101,11 +109,12 @@ const createMonitorization = async() => {
                   
                   timestamp: {
                   type:   'date',
-                  format: 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd"T"HH:mm:ss.SSSZ'
+                  format: 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd\'T\'HH:mm:ss.SSSZ'
                 },
                   totalreceived : {
                     type : 'integer'
                   }
+		    }
                 
               }
         }
@@ -121,11 +130,10 @@ const createMonitorization = async() => {
 const createDataLostPackets = async() => {
   try{
 
- const create = await client.create({
-      id: '2',
+ const create = await client.indices.create({
+      
       index: 'datalostpackets',
       wait_for_active_shards: '1',
-      refresh: 'true',
       body:{
         mappings : {
           properties : {
@@ -155,7 +163,7 @@ const createDataLostPackets = async() => {
           
             timestamp: {
             type:   'date',
-            format: 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd"T"HH:mm:ss.SSSZ'
+            format: 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd\'T\'HH:mm:ss.SSSZ'
           }
             }
           }
@@ -169,11 +177,10 @@ const createDataLostPackets = async() => {
 
 const createHelloLostPackets = async() => {
   try{
-  const create = await client.create({
-      id: '3',
+  const create = await client.indices.create({
+      
       index: 'hellolostpackets',
       wait_for_active_shards: '1',
-      refresh: 'true',
       body:{
         mappings : {
           properties : {
@@ -203,7 +210,7 @@ const createHelloLostPackets = async() => {
           
             timestamp: {
             type:   'date',
-            format: 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd"T"HH:mm:ss.SSSZ'
+            format: 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd\'T\'HH:mm:ss.SSSZ'
           }
             }
           }
@@ -247,11 +254,18 @@ const deleteDataLostPackets = async() => {
 
 const existMonitorization = async() => {
   try {
-  const body = await client.exists({
+  const response = await client.indices.exists({
     index: 'monitorization3',
-    id: 1
+   
   })
-  return body 
+  
+   // console.log(response) 
+    return response
+  
+   
+    
+	    
+  
 }catch(error){
   console.log(error)
 }
@@ -259,23 +273,38 @@ const existMonitorization = async() => {
 
 const existHello = async() => {
   try {
-  const body = await client.exists({
+  const response = await client.indices.exists({
     index: 'hellolostpackets',
-    id: 3
+    
   })
-  return body 
+  
+  
+  // console.log(response)
+  return response
+
+ 
+ 
+
+
 }catch(error){
   console.log(error)
 }
 }
 
-const existData = async() => {
+const existData = async () => {
   try {
-  const body = await client.exists({
+  const response = await client.indices.exists({
     index: 'datalostpackets',
-    id: 2
+   
   })
-  return body 
+  
+    //	  console.log(response)
+  return response
+  
+   
+    
+	  
+  
 }catch(error){
   console.log(error)
 }
