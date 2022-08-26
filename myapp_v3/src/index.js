@@ -4,12 +4,12 @@ const { default: CreateApi } = require('@elastic/elasticsearch/lib/api/api/creat
 const app = require('./server');
 require('./database');
 const createTables = require('./setup/setupelastic.js')
-const createTab = async() =>{
+const createTab = async() =>  {
 
-await createTables().catch(e => console.log(e))
+createTables().catch(e => console.log(e))
 }
 
-setTimeout(createTab,20000);
+setTimeout(createTab,25000);
 
 app.listen(app.get('port'),() => {
     //const  misetup = setup.createTables().catch(e => console.log(e))

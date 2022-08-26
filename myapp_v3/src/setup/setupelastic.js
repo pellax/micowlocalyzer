@@ -101,8 +101,17 @@ const createMonitorization = async() => {
 		sendpayloadbytes : {
 			type: 'integer'
 		},
-		throughput : {
+		throughputsend: {
 
+			type: 'integer'
+		},
+		 troughputreceived:{
+			type: 'integer'
+		},
+		 overheadsend:{
+			type: 'integer'
+		},
+		overheadreceived:{
 			type: 'integer'
 		},
 

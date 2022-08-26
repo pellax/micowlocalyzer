@@ -28,7 +28,11 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 	const sendcontrolbytes = scb;
 	const receivedpayloadbytes = rpb;
 	const receivedcontrolbytes = rcb;
-        const throughput = parseInt(spb)+parseInt(scb)+parseInt(rpb)+parseInt(rcb);
+        const throughputSend = parseInt(spb)+parseInt(scb);
+        const throughputReceived = parseInt(rpb)+parseInt(rcb);
+	const overheadSend = parseInt(scb)/parseInt(spb);
+	
+	const overheadReceived = parseInt(rcb)/parseInt(rpb)
 	let senddatapackets = parseInt(sp) - parseInt(shp);
 
 	const PacketTrafficPos = new PacketTraffic({ recpackets, sendpackets, rechellopackets, sendhellopackets, datapackme, broadcast, fwdpackets, queuesendsize, dstinyunreach, notforme, iamvia, localaddress, totalreceived });
@@ -52,7 +56,7 @@ PacketTrafficCtrl.sendPacketTraffic = async (req, res) => {
 	//const todaystring = `${years}-${month}-${days}T${hours}:${minutes}:${seconds}.${miliseconds}Z`
 	//console.log(today.toISOString())
 	//today = new Date(todaystring.toISOString())
-	indexMonitorization(Client, rp, sp, rhp, shp, dpm, brd, fwd,qss,dst, nfm, ivi,spb,scb,rpb,rcb,throughput,ladd, totalreceived, senddatapackets, today,todaystring).then(function (value) {
+	indexMonitorization(Client, rp, sp, rhp, shp, dpm, brd, fwd,qss,dst, nfm, ivi,spb,scb,rpb,rcb,throughputSend,throughputReceived,overheadSend,overheadReceived,ladd, totalreceived, senddatapackets, today,todaystring).then(function (value) {
 		// DEBUG
 	//	console.log(value)
 	}).catch(function (e) {
@@ -187,7 +191,7 @@ const indexHelloLost = async (Client, ladd, rhp, shp, today,todaystring) => {
 	}
 
 }
-const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, qss, dst, nfm, ivi,spb,scb,rpb,rcb,throughput,ladd, totalreceived, senddatapackets, today,todaystring) => {
+const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, qss, dst, nfm, ivi,spb,scb,rpb,rcb,throughputSend,throughputReceived,overheadSend,overheadReceived,ladd, totalreceived, senddatapackets, today,todaystring) => {
 	try {
 		const index = await Client.index({
 
@@ -199,7 +203,6 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, qss,
 				receivedpayloadbytes:rpb,
 				sendcontrolbytes:scb,
 				sendpayloadbytes:spb,
-				throughput:throughput,
 				rechellopackets: rhp,
 				sendhellopackets: shp,
 				datapackme: dpm,
@@ -210,6 +213,10 @@ const indexMonitorization = async (Client, rp, sp, rhp, shp, dpm, brd, fwd, qss,
 				notforme: nfm,
 				iamvia: ivi,
 				localaddress: ladd.toString('utf-8'),
+				throughputsend:throughputSend,
+				throughputreceived:throughputReceived,
+				overheadsend:overheadSend,
+				overheadreceived:overheadReceived,
 				totalreceived: totalreceived,
 				senddatapackets: senddatapackets,
 				timestamp: today.setTime(Date.parse(todaystring.toISOString()))
