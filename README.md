@@ -16,7 +16,7 @@ The automatic setup is supposed to work at any kind of server with docker-compos
 ## Additional checks
 In the kibana UI there is a hamburger menu at the left side of the screen . If you right click on it a menu should appear, if you scroll down there is an option called Dev tools, right click on it .There a consolo should appear. Introduce the following command, select the instruction and righ click into the play symbol.
 `GET monitorization3/_mapping`
-The response of the elastic engine should look exactly like this to have the whole system ready to work with te LoRa boards
+The response of the elastic engine should look **exactly** like this to have the whole system ready to work with te LoRa boards
 ```
 {
   "monitorization3" : {
