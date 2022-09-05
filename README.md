@@ -1,4 +1,6 @@
-
+#Instructions
+Current instructions of the project located in main branch.
+These instructions are only the remains of the inherited previous project, please ignore them, only here for matter of credits to the previous authors.
 //Para node
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
