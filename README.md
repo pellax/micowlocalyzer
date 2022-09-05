@@ -110,6 +110,7 @@ The client software for the LoRa boards is located in [this](https://github.com/
 
 
 ### Original Instructions
+These instruction belong to the original code inherited from cowlocalizer and they are not useful anymore. Since the current project is all containerized, please follow the previous instructions to lift the server through the docker-compose container, you are not supposed to run any node server outside the docker container or anything. These are only here to give credits to the original authors of the server, but many of these parts have been removed from the current project. 
 //for node
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
