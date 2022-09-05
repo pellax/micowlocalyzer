@@ -108,7 +108,17 @@ The client software for the LoRa boards is located in [this](https://github.com/
 `docker-compose up `
 3. Wait for the log message `Kibana is now degraded` . The server is now ready for the incoming data.
 
+# Observed problems
+In the kibana UI you will see spontaneous resets in the test boards. The origin of these issues are still unknown, on the other hand you can see already the utility of the system working since the values appear in the kibana UI
 
+# Kibana Instructions
+At the left side of the kibana that will be runing on the address http//myip:5601 you will see in the Analytics section, the dashboards menu. In a clean installation, the Kibana will invite you to create your index patterns. The user should tell the kibana to create an index pattern with the name of monitorization3 and select the field timestamp as a timestamp field. Then the option of creating multiple dashboards should be available. The X axis will correspond for the timestamp, and the Y axis should use the max function along with the choosen field to be observed . You should choose in the top menu a refresh interval, as well as a time interval. The final step will be saving the dashboard.
+The steps will look like this:
+
+1. Create index pattern
+2. Create dashboards using timestamp as X axis and max function of the desired field as Y axis
+3. Save the visualization
+4. Save the dashboard to have it available at any time
 ### Original Instructions
 These instruction belong to the original code inherited from cowlocalizer and they are not useful anymore. Since the current project is all containerized, please follow the previous instructions to lift the server through the docker-compose container, you are not supposed to run any node server outside the docker container or anything. These are only here to give credits to the original authors of the server, but many of these parts have been removed from the current project. 
 //for node
