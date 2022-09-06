@@ -1,4 +1,5 @@
-
+First usable version of the elastic server with fewer parameters.
+The current versions of the monitoring client does not work with this back end because the number of parameters does not match.
 //Para node
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
