@@ -1,4 +1,7 @@
-
+# Readme
+Test branch, it won't work, just one of multiple test branches while trying to reach a calculus of the theoretical packets at each node.
+# Original instructions
+Do not use, old instructions, not useful anymore.
 //Para node
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
